@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import FloatingHearts from './components/FloatingHearts.jsx';
 import PreviewBanner from './components/PreviewBanner.jsx';
 import CelebrationPage from './components/pages/CelebrationPage.jsx';
@@ -11,7 +11,6 @@ import HostCreation from './components/host/HostCreation.jsx';
 import themes from './config/themes.js';
 
 const DEFAULT_INTRO = "I've been wanting to ask you something…";
-
 const initialHostData = {
   from: '',
   fromEmail: '',
@@ -50,6 +49,8 @@ export default function App() {
   const [plan, setPlan] = useState(initialPlan);
   const [accepted, setAccepted] = useState(false);
   const [toast, setToast] = useState(null);
+  const [letterTransition, setLetterTransition] = useState(null);
+  const transitionTimers = useRef([]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -76,6 +77,31 @@ export default function App() {
     const timeout = setTimeout(() => setToast(null), 3500);
     return () => clearTimeout(timeout);
   }, [toast]);
+
+  useEffect(() => {
+    return () => {
+      transitionTimers.current.forEach((timer) => window.clearTimeout(timer));
+      transitionTimers.current = [];
+    };
+  }, []);
+
+  const startLetterTransition = ({ flyDuration = 920 }) => {
+    transitionTimers.current.forEach((timer) => window.clearTimeout(timer));
+    transitionTimers.current = [];
+
+    const dropDuration = 720;
+    const dropDelay = Math.max(0, Math.round(flyDuration * 0.35));
+    setLetterTransition({ dropIn: false, dropDuration });
+
+    transitionTimers.current.push(
+      window.setTimeout(
+        () => setLetterTransition((prev) => (prev ? { ...prev, dropIn: true } : prev)),
+        dropDelay
+      ),
+      window.setTimeout(() => setPage(1), dropDelay + dropDuration - 80),
+      window.setTimeout(() => setLetterTransition(null), dropDelay + dropDuration + 200)
+    );
+  };
 
   const activeData = useMemo(() => {
     if (mode === 'recipient' || mode === 'preview') {
@@ -136,6 +162,16 @@ export default function App() {
 
   const totalSteps = 5;
   const dotIndex = Math.max(0, page - 1);
+  const dropDuration = letterTransition?.dropDuration || 720;
+  const showGreeting = page === 1 || letterTransition;
+  const greetingMotionStyle = letterTransition
+    ? {
+        transform: letterTransition.dropIn ? 'translateY(0)' : 'translateY(-28vh)',
+        opacity: letterTransition.dropIn ? 1 : 0,
+        transition: `transform ${dropDuration}ms cubic-bezier(0.16, 0.84, 0.3, 1), opacity 320ms ease`,
+        willChange: 'transform, opacity',
+      }
+    : undefined;
 
   if (mode === 'check') {
     return null;
@@ -162,31 +198,52 @@ export default function App() {
   }
 
   return (
-    <div className="relative min-h-screen">
+    <div className="relative h-screen overflow-hidden">
       {mode === 'preview' ? <PreviewBanner onExit={handleExitPreview} /> : null}
-      <div className="relative flex min-h-screen items-center justify-center px-4 py-12">
+      <div
+        className={`relative flex h-full items-center justify-center px-4 ${
+          mode === 'preview' ? 'pt-16 pb-12' : 'py-12'
+        }`}
+      >
         <FloatingHearts color={theme.primary} />
         <div className="relative z-10 w-full max-w-4xl">
-          {page === 0 && (
-            <LetterPage
-              toName={activeData?.to}
-              fromName={activeData?.from}
-              theme={theme}
-              onNext={() => setPage(1)}
-            />
+          {(page === 0 || letterTransition) && (
+            <div
+              className={`transition-opacity duration-500 ${
+                letterTransition ? 'opacity-0 pointer-events-none' : 'opacity-100'
+              }`}
+              style={{ transitionDelay: letterTransition ? '200ms' : '0ms' }}
+            >
+              <LetterPage
+                toName={activeData?.to}
+                fromName={activeData?.from}
+                theme={theme}
+                onFlyOut={startLetterTransition}
+              />
+            </div>
           )}
-          {page === 1 && (
-            <GreetingPage
-              toName={activeData?.to}
-              fromName={activeData?.from}
-              intro={activeData?.intro}
-              theme={theme}
-              onNext={() => setPage(2)}
-              pageIndex={dotIndex}
-              total={totalSteps}
-              onDotClick={(index) => setPage(index + 1)}
-            />
-          )}
+          {showGreeting ? (
+            <div
+              className={`z-20 flex items-center justify-center ${
+                letterTransition
+                  ? 'pointer-events-none absolute inset-0'
+                  : 'pointer-events-auto relative'
+              }`}
+            >
+              <div className="w-full" style={letterTransition ? greetingMotionStyle : undefined}>
+                <GreetingPage
+                  toName={activeData?.to}
+                  fromName={activeData?.from}
+                  intro={activeData?.intro}
+                  theme={theme}
+                  onNext={letterTransition ? () => {} : () => setPage(2)}
+                  pageIndex={dotIndex}
+                  total={totalSteps}
+                  onDotClick={letterTransition ? () => {} : (index) => setPage(index + 1)}
+                />
+              </div>
+            </div>
+          ) : null}
           {page === 2 && (
             <QuestionPage
               theme={theme}

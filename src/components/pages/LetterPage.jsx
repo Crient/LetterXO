@@ -1,31 +1,50 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Heart } from 'lucide-react';
 
-export default function LetterPage({ toName, fromName, theme, onNext }) {
+export default function LetterPage({ toName, fromName, theme, onFlyOut }) {
   const [stage, setStage] = useState('closed');
   const [showRibbon, setShowRibbon] = useState(true);
   const [hasOpened, setHasOpened] = useState(false);
+  const [isFlying, setIsFlying] = useState(false);
+  const letterRef = useRef(null);
+  const flyTimeout = useRef(null);
   const isOpen = stage === 'open';
 
   const handleMouseEnter = () => {
-    if (!isOpen) setStage('peek');
+    if (!isOpen && !hasOpened) setStage('peek');
   };
 
   const handleMouseLeave = () => {
-    if (!isOpen) setStage('closed');
+    if (!isOpen && !hasOpened) setStage('closed');
   };
 
   const handleClick = () => {
     if (hasOpened) return;
     setStage('open');
     setHasOpened(true);
-    window.setTimeout(() => {
-      onNext?.();
-    }, 900);
+    const pullDuration = 520;
+    const flyDuration = 920;
+    flyTimeout.current = window.setTimeout(() => {
+      const rect = letterRef.current?.getBoundingClientRect();
+      setIsFlying(true);
+      onFlyOut?.({
+        rect: rect
+          ? {
+              left: rect.left,
+              top: rect.top,
+              width: rect.width,
+              height: rect.height,
+            }
+          : null,
+        flyDuration,
+      });
+    }, pullDuration);
   };
 
-  const letterTranslate = stage === 'open' ? '-55%' : stage === 'peek' ? '-10%' : '35%';
+  const letterTranslate = isFlying ? '-210%' : stage === 'open' ? '-85%' : stage === 'peek' ? '-20%' : '35%';
   const letterTransform = `translate(-50%, ${letterTranslate}) translateZ(0)`;
+  const letterClip =
+    stage === 'open' || isFlying ? 'inset(0 0 0 0)' : stage === 'peek' ? 'inset(0 0 30% 0)' : 'inset(0 0 40% 0)';
 
   const flapTransform = stage === 'closed' ? 'rotateX(0deg)' : 'rotateX(-150deg)';
   const letterOpacity = stage === 'closed' ? 0 : 1;
@@ -43,10 +62,9 @@ export default function LetterPage({ toName, fromName, theme, onNext }) {
 
   const baseTexture = {
     backgroundColor: theme?.secondary,
-    backgroundImage: `linear-gradient(135deg, rgba(255,255,255,0.45), rgba(255,255,255,0) 45%), url("${insideTextureSrc}")`,
-    backgroundSize: '100% 100%, cover',
-    backgroundRepeat: 'no-repeat, no-repeat',
-    backgroundBlendMode: 'soft-light, multiply',
+    backgroundImage: `url("${insideTextureSrc}")`,
+    backgroundSize: 'cover',
+    backgroundRepeat: 'no-repeat',
     boxShadow:
       '0 26px 40px rgba(0,0,0,0.16), 0 10px 18px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.5)',
   };
@@ -68,17 +86,26 @@ export default function LetterPage({ toName, fromName, theme, onNext }) {
     boxShadow: 'inset 0 10px 16px rgba(255,255,255,0.35), inset 0 -10px 14px rgba(0,0,0,0.08)',
   };
 
+  useEffect(() => {
+    return () => {
+      if (flyTimeout.current) window.clearTimeout(flyTimeout.current);
+    };
+  }, []);
+
   return (
     <div className="flex flex-col items-center gap-6 text-center">
       <div className="origin-center" style={{ transform: 'scale(1.1)' }}>
       <div
-        className="envelope-3d envelope-float relative h-64 w-96 cursor-pointer outline-none focus:outline-none focus-visible:outline-none"
+        className={`envelope-3d relative h-64 w-96 cursor-pointer outline-none focus:outline-none focus-visible:outline-none ${isFlying ? 'envelope-tilt' : 'envelope-float'}`}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         onClick={handleClick}
         role="button"
         tabIndex={0}
-        style={{ willChange: 'transform' }}
+        style={{
+          willChange: 'transform',
+          transition: isFlying ? 'transform 260ms ease' : 'none',
+        }}
         onKeyDown={(event) => {
           if (event.key === 'Enter' || event.key === ' ') {
             handleClick();
@@ -112,25 +139,7 @@ export default function LetterPage({ toName, fromName, theme, onNext }) {
             willChange: 'transform',
           }}
         />
-        <div
-          className="pointer-events-none absolute right-6 top-4 z-30 h-[60%] w-1 rounded-full"
-          style={{
-            background: 'linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.1))',
-            opacity: 0.5,
-          }}
-          aria-hidden="true"
-        />
-        <div
-          className="pointer-events-none absolute right-6 top-6 z-30 h-10 w-10 rounded-full"
-          style={{
-            background:
-              'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.85), rgba(255,255,255,0) 55%), radial-gradient(circle at 70% 70%, rgba(0,0,0,0.15), rgba(0,0,0,0) 60%), linear-gradient(135deg, rgba(255,255,255,0.45), rgba(0,0,0,0.25))',
-            boxShadow:
-              '0 10px 16px rgba(0,0,0,0.18), inset 0 2px 6px rgba(255,255,255,0.5), inset 0 -6px 10px rgba(0,0,0,0.22)',
-            opacity: 0.55,
-          }}
-          aria-hidden="true"
-        />
+        {/* Specular highlight removed */}
         <div
           className="pointer-events-none absolute left-0 right-0 top-0 z-30 h-1/2 rounded-t-[2.5rem]"
           style={{
@@ -165,26 +174,37 @@ export default function LetterPage({ toName, fromName, theme, onNext }) {
           aria-hidden="true"
         />
         <div
-          className="absolute left-1/2 top-6 z-40 w-[88%]"
+          className="absolute left-1/2 top-6 z-40 w-[94%]"
           style={{
             transform: letterTransform,
             opacity: letterOpacity,
             transitionDelay: letterDelay,
-            transition: 'transform 700ms cubic-bezier(0.22, 0.61, 0.36, 1), opacity 300ms ease-out',
+            clipPath: letterClip,
+            transition: isFlying
+              ? 'transform 620ms cubic-bezier(0.16, 0.84, 0.3, 1), opacity 240ms ease-out'
+              : 'transform 750ms cubic-bezier(0.16, 0.8, 0.35, 1), opacity 280ms ease-out, clip-path 520ms ease',
             willChange: 'transform, opacity',
           }}
         >
           <div
-            className="rounded-3xl border bg-white px-7 py-7 text-left shadow-lg"
-            style={{ borderColor: theme?.primary }}
+            ref={letterRef}
+            className="px-12 py-10 text-left min-h-[20rem]"
+            style={{
+              backgroundImage: 'url("/envelope_paper.png")',
+              backgroundSize: '100% 100%',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
+            }}
           >
-            <p className="text-sm font-semibold" style={{ color: theme?.accent }}>
+            <p className="text-sm font-semibold" style={{ paddingTop: '2.5rem',paddingLeft:"10px", color: theme?.accent }}>
               To: {toName || 'Someone special'}
             </p>
-            <p className="mt-2 text-xs text-gray-500">(Click to open your letter)</p>
-            <div className="mt-4 flex items-center gap-2 text-xs text-gray-400">
-              <Heart size={14} />
-              <span>From {fromName || 'your secret admirer'}</span>
+            <p className="mt-2 text-xs text-gray-500"
+            style={{paddingLeft:"10px"}}>(Click to open your letter)</p>
+            <div className="mt-4 flex items-center gap-2 text-xs text-gray-400"
+            style={{paddingLeft:"10px"}}>
+              <Heart size={12} />
+              <span style={{paddingLeft:"-5px"}}>From {fromName || 'your secret admirer'}</span>
             </div>
           </div>
         </div>

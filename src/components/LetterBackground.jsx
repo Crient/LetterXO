@@ -4,13 +4,25 @@ export default function LetterBackground({
   page = 0,
   total = 0,
   onDotClick,
+  frameWidth,
 }) {
   return (
     <div
-      className="torn-edge relative w-full max-w-2xl rounded-2xl px-8 py-10 shadow-2xl"
-      style={{ backgroundColor: theme?.secondary || '#fff', color: theme?.accent || '#2d1b24' }}
+      className="torn-edge torn-paper-shadow relative mx-auto w-full max-w-[50rem] rounded-2xl px-8 py-8 min-h-[30rem]"
+      style={{
+        backgroundColor: 'transparent',
+        backgroundImage: 'url("/envelope_paper.png")',
+        backgroundSize: '200% 200%',
+        backgroundPosition: '50% 50%',
+        backgroundRepeat: 'no-repeat',
+        width: frameWidth,
+        color: theme?.accent || '#2d1b24',
+        boxShadow:
+          '0 38px 80px rgba(0, 0, 0, 0.22), 0 18px 36px rgba(0, 0, 0, 0.16), 0 6px 12px rgba(0, 0, 0, 0.12), inset 0 2px 4px rgba(255,255,255,0.55), inset 0 -12px 20px rgba(0,0,0,0.1)',
+        filter: 'drop-shadow(0 22px 40px rgba(0,0,0,0.22)) drop-shadow(0 6px 14px rgba(0,0,0,0.14))',
+      }}
     >
-      <div className="space-y-6">{children}</div>
+      <div className="relative z-10 space-y-6">{children}</div>
       {total > 0 && (
         <div className="mt-8 flex items-center justify-center gap-2">
           {Array.from({ length: total }).map((_, index) => (
