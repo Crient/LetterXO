@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -28,6 +30,7 @@
 
 :root {
   color-scheme: light;
+  --valentine-deep: 350 65% 45%;
 }
 
 body {
@@ -40,6 +43,12 @@ body {
 
 .font-cursive {
   font-family: 'Jane Austen', 'Brush Script MT', 'Segoe Script', 'Bradley Hand', cursive;
+}
+
+.valentine-title {
+  font-family: 'Dancing Script', 'Jane Austen', 'Brush Script MT', 'Segoe Script', 'Bradley Hand', cursive;
+  color: hsl(var(--valentine-deep));
+  font-weight: 700;
 }
 
 .torn-edge {
@@ -106,6 +115,43 @@ body {
   transform: rotate(-5deg);
 }
 
+@keyframes pageSwingEnter {
+  0% {
+    transform: translateX(calc(-1 * var(--swing-distance, 100vw) - 50%));
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes pageSwingExit {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(calc(var(--swing-distance, 100vw) + 50%));
+  }
+}
+
+.page-swing-stage {
+  display: grid;
+  position: relative;
+}
+
+.page-swing-layer {
+  grid-area: 1 / 1;
+  will-change: transform;
+}
+
+.page-swing-enter {
+  animation: pageSwingEnter var(--swing-duration, 900ms) cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+.page-swing-exit {
+  animation: pageSwingExit var(--swing-duration, 900ms) cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  pointer-events: none;
+}
+
 
 @keyframes heartBeat {
   0%,
@@ -144,7 +190,13 @@ body {
   animation-delay: 0.44s;
 }
 
+.no-button-move {
+  transition: left 420ms cubic-bezier(0.22, 0.61, 0.36, 1), top 420ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .page-swing-enter,
+  .page-swing-exit,
   .heart-beat {
     animation: none;
   }

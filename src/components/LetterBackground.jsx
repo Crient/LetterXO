@@ -1,13 +1,16 @@
 export default function LetterBackground({
   children,
+  overlay,
   theme,
   page = 0,
   total = 0,
   onDotClick,
   frameWidth,
+  containerRef,
 }) {
   return (
     <div
+      ref={containerRef}
       className="torn-edge torn-paper-shadow relative mx-auto w-full max-w-[50rem] rounded-2xl px-8 py-8 min-h-[30rem]"
       style={{
         backgroundColor: 'transparent',
@@ -22,6 +25,7 @@ export default function LetterBackground({
         filter: 'drop-shadow(0 22px 40px rgba(0,0,0,0.22)) drop-shadow(0 6px 14px rgba(0,0,0,0.14))',
       }}
     >
+      {overlay ? <div className="pointer-events-none absolute inset-0 z-20">{overlay}</div> : null}
       <div className="relative z-10 space-y-6">{children}</div>
       {total > 0 && (
         <div className="mt-8 flex items-center justify-center gap-2">

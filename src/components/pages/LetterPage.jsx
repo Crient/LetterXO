@@ -93,7 +93,8 @@ export default function LetterPage({ toName, fromName, theme, onFlyOut }) {
   }, []);
 
   return (
-    <div className="flex flex-col items-center gap-6 text-center">
+    <div className="flex flex-col items-center gap-6 text-center"
+    style={{marginTop: "50px"}}>
       <div className="origin-center" style={{ transform: 'scale(1.1)' }}>
       <div
         className={`envelope-3d relative h-64 w-96 cursor-pointer outline-none focus:outline-none focus-visible:outline-none ${isFlying ? 'envelope-tilt' : 'envelope-float'}`}

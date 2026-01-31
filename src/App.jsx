@@ -11,6 +11,8 @@ import HostCreation from './components/host/HostCreation.jsx';
 import themes from './config/themes.js';
 
 const DEFAULT_INTRO = "I've been wanting to ask you something…";
+const PAGE_SWING_MS = 900;
+const PAGE_SWING_DISTANCE = '100vw';
 const initialHostData = {
   from: '',
   fromEmail: '',
@@ -50,7 +52,9 @@ export default function App() {
   const [accepted, setAccepted] = useState(false);
   const [toast, setToast] = useState(null);
   const [letterTransition, setLetterTransition] = useState(null);
+  const [pageTransition, setPageTransition] = useState(null);
   const transitionTimers = useRef([]);
+  const pageTransitionTimers = useRef([]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -82,6 +86,8 @@ export default function App() {
     return () => {
       transitionTimers.current.forEach((timer) => window.clearTimeout(timer));
       transitionTimers.current = [];
+      pageTransitionTimers.current.forEach((timer) => window.clearTimeout(timer));
+      pageTransitionTimers.current = [];
     };
   }, []);
 
@@ -100,6 +106,22 @@ export default function App() {
       ),
       window.setTimeout(() => setPage(1), dropDelay + dropDuration - 80),
       window.setTimeout(() => setLetterTransition(null), dropDelay + dropDuration + 200)
+    );
+  };
+
+  const startPageTransition = (nextPage) => {
+    if (letterTransition || nextPage === page || pageTransition) return;
+    const from = page;
+    const to = nextPage;
+    pageTransitionTimers.current.forEach((timer) => window.clearTimeout(timer));
+    pageTransitionTimers.current = [];
+    setPageTransition({ from, to, phase: 'exit' });
+    pageTransitionTimers.current.push(
+      window.setTimeout(() => {
+        setPage(to);
+        setPageTransition({ from, to, phase: 'enter' });
+      }, PAGE_SWING_MS),
+      window.setTimeout(() => setPageTransition(null), PAGE_SWING_MS * 2)
     );
   };
 
@@ -161,9 +183,11 @@ export default function App() {
   };
 
   const totalSteps = 5;
-  const dotIndex = Math.max(0, page - 1);
   const dropDuration = letterTransition?.dropDuration || 720;
-  const showGreeting = page === 1 || letterTransition;
+  const pageTransitionStyle = {
+    '--swing-duration': `${PAGE_SWING_MS}ms`,
+    '--swing-distance': PAGE_SWING_DISTANCE,
+  };
   const greetingMotionStyle = letterTransition
     ? {
         transform: letterTransition.dropIn ? 'translateY(0)' : 'translateY(-28vh)',
@@ -172,6 +196,80 @@ export default function App() {
         willChange: 'transform, opacity',
       }
     : undefined;
+
+  const renderStep = (pageNumber) => {
+    const pageIndex = Math.max(0, pageNumber - 1);
+
+    switch (pageNumber) {
+      case 1:
+        return (
+          <GreetingPage
+            toName={activeData?.to}
+            fromName={activeData?.from}
+            intro={activeData?.intro}
+            theme={theme}
+            onNext={() => startPageTransition(2)}
+            pageIndex={pageIndex}
+            total={totalSteps}
+            onDotClick={(index) => startPageTransition(index + 1)}
+          />
+        );
+      case 2:
+        return (
+          <QuestionPage
+            theme={theme}
+            onYes={() => {
+              setAccepted(true);
+              startPageTransition(3);
+            }}
+            pageIndex={pageIndex}
+            total={totalSteps}
+            onDotClick={(index) => startPageTransition(index + 1)}
+          />
+        );
+      case 3:
+        return (
+          <CelebrationPage
+            theme={theme}
+            onNext={() => startPageTransition(4)}
+            pageIndex={pageIndex}
+            total={totalSteps}
+            onDotClick={(index) => startPageTransition(index + 1)}
+          />
+        );
+      case 4:
+        return (
+          <PlanPage
+            theme={theme}
+            plan={plan}
+            setPlan={setPlan}
+            onNext={() => startPageTransition(5)}
+            pageIndex={pageIndex}
+            total={totalSteps}
+            onDotClick={(index) => startPageTransition(index + 1)}
+          />
+        );
+      case 5:
+        return (
+          <MemoryPage
+            data={activeData}
+            plan={plan}
+            theme={theme}
+            onSend={handleSend}
+            onReplay={() => {
+              setPlan(initialPlan);
+              setAccepted(false);
+              setPage(0);
+            }}
+            pageIndex={pageIndex}
+            total={totalSteps}
+            onDotClick={(index) => startPageTransition(index + 1)}
+          />
+        );
+      default:
+        return null;
+    }
+  };
 
   if (mode === 'check') {
     return null;
@@ -222,76 +320,36 @@ export default function App() {
               />
             </div>
           )}
-          {showGreeting ? (
-            <div
-              className={`z-20 flex items-center justify-center ${
-                letterTransition
-                  ? 'pointer-events-none absolute inset-0'
-                  : 'pointer-events-auto relative'
-              }`}
-            >
-              <div className="w-full" style={letterTransition ? greetingMotionStyle : undefined}>
+          {letterTransition ? (
+            <div className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center">
+              <div className="w-full" style={greetingMotionStyle}>
                 <GreetingPage
                   toName={activeData?.to}
                   fromName={activeData?.from}
                   intro={activeData?.intro}
                   theme={theme}
-                  onNext={letterTransition ? () => {} : () => setPage(2)}
-                  pageIndex={dotIndex}
+                  onNext={() => {}}
+                  pageIndex={0}
                   total={totalSteps}
-                  onDotClick={letterTransition ? () => {} : (index) => setPage(index + 1)}
+                  onDotClick={() => {}}
                 />
               </div>
             </div>
           ) : null}
-          {page === 2 && (
-            <QuestionPage
-              theme={theme}
-              onYes={() => {
-                setAccepted(true);
-                setPage(3);
-              }}
-              pageIndex={dotIndex}
-              total={totalSteps}
-              onDotClick={(index) => setPage(index + 1)}
-            />
-          )}
-          {page === 3 && (
-            <CelebrationPage
-              theme={theme}
-              onNext={() => setPage(4)}
-              pageIndex={dotIndex}
-              total={totalSteps}
-              onDotClick={(index) => setPage(index + 1)}
-            />
-          )}
-          {page === 4 && (
-            <PlanPage
-              theme={theme}
-              plan={plan}
-              setPlan={setPlan}
-              onNext={() => setPage(5)}
-              pageIndex={dotIndex}
-              total={totalSteps}
-              onDotClick={(index) => setPage(index + 1)}
-            />
-          )}
-          {page === 5 && (
-            <MemoryPage
-              data={activeData}
-              plan={plan}
-              theme={theme}
-              onSend={handleSend}
-              onReplay={() => {
-                setPlan(initialPlan);
-                setAccepted(false);
-                setPage(0);
-              }}
-              pageIndex={dotIndex}
-              total={totalSteps}
-              onDotClick={(index) => setPage(index + 1)}
-            />
-          )}
+          {!letterTransition && pageTransition ? (
+            <div className="page-swing-stage" style={pageTransitionStyle}>
+              {pageTransition.phase === 'exit' ? (
+                <div className="page-swing-layer page-swing-exit">
+                  {renderStep(pageTransition.from)}
+                </div>
+              ) : (
+                <div className="page-swing-layer page-swing-enter">
+                  {renderStep(pageTransition.to)}
+                </div>
+              )}
+            </div>
+          ) : null}
+          {!letterTransition && !pageTransition && page >= 1 ? renderStep(page) : null}
         </div>
       </div>
     </div>
