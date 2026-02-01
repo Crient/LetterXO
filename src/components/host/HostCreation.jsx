@@ -1,30 +1,95 @@
-import { useState } from 'react';
-import { Copy, Eye, Link2, Mail, Palette, PenLine, User, Users } from 'lucide-react';
-import themes from '../../config/themes.js';
+import { useMemo, useState } from 'react';
+import { Copy, Link2, Mail, PenLine, User, Users } from 'lucide-react';
+import { buildHostToReceiverMailto } from '../../utils/mailto.js';
 
-export default function HostCreation({ data, setData, onCreate, shareUrl, onPreview }) {
-  const themeCards = [
-    { key: 'Normal', emoji: '💗' },
-    { key: 'Snoopy', emoji: '🐶' },
-    { key: 'BUBUDUDU', emoji: '🧸' },
-    { key: 'Chiikawa', emoji: '🐰' },
-    { key: 'Piggy', emoji: '🐷' },
-    { key: 'Sosojojo', emoji: '✨' },
-  ];
+const DEFAULT_MESSAGE = "I've been wanting to ask you something…";
 
-  const [copied, setCopied] = useState(false);
+const initialData = {
+  senderName: '',
+  senderEmail: '',
+  receiverName: '',
+  receiverEmail: '',
+  letterMessage: DEFAULT_MESSAGE,
+};
+
+export default function HostCreation() {
+  const [data, setData] = useState(initialData);
+  const [links, setLinks] = useState(null);
+  const [copied, setCopied] = useState({ receiver: false, results: false });
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (field) => (event) => {
     setData({ ...data, [field]: event.target.value });
   };
 
-  const handleCopy = async () => {
+  const receiverLink = links?.receiverLink || '';
+  const resultsLink = links?.resultsLink || '';
+
+  const draftMailto = useMemo(() => {
+    if (!receiverLink) return '';
+    return buildHostToReceiverMailto({
+      senderName: data.senderName.trim(),
+      receiverName: data.receiverName.trim(),
+      receiverEmail: data.receiverEmail.trim(),
+      receiverLink,
+      letterMessage: data.letterMessage.trim(),
+    });
+  }, [data, receiverLink]);
+
+  const handleCopy = async (type, value) => {
+    if (!value) return;
     try {
-      await navigator.clipboard.writeText(shareUrl);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch (error) {
-      setCopied(false);
+      await navigator.clipboard.writeText(value);
+      setCopied((prev) => ({ ...prev, [type]: true }));
+      setTimeout(() => setCopied((prev) => ({ ...prev, [type]: false })), 2000);
+    } catch {
+      setCopied((prev) => ({ ...prev, [type]: false }));
+    }
+  };
+
+  const handleCreate = async () => {
+    setError('');
+
+    const senderName = data.senderName.trim();
+    const receiverName = data.receiverName.trim();
+
+    if (!senderName || !receiverName) {
+      setError('Your name and their name are required.');
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const payload = {
+        sender_name: senderName,
+        sender_email: data.senderEmail.trim(),
+        receiver_name: receiverName,
+        receiver_email: data.receiverEmail.trim(),
+        letter_message: data.letterMessage.trim(),
+      };
+
+      const response = await fetch('/api/valentine/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result?.error || 'Unable to create your link.');
+      }
+
+      const origin = window.location.origin;
+      setLinks({
+        receiverLink: `${origin}/v/${result.id}?t=${result.edit_token}`,
+        resultsLink: `${origin}/r/${result.id}?t=${result.view_token}`,
+      });
+    } catch (err) {
+      setError(err?.message || 'Something went wrong. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -45,8 +110,8 @@ export default function HostCreation({ data, setData, onCreate, shareUrl, onPrev
             </span>
             <input
               type="text"
-              value={data.from}
-              onChange={handleChange('from')}
+              value={data.senderName}
+              onChange={handleChange('senderName')}
               placeholder="Alex"
               className="rounded-2xl border px-4 py-3 text-sm outline-none"
             />
@@ -54,12 +119,12 @@ export default function HostCreation({ data, setData, onCreate, shareUrl, onPrev
 
           <label className="grid gap-2 text-sm font-semibold text-gray-700">
             <span className="flex items-center gap-2">
-              <Mail size={16} /> Your email
+              <Mail size={16} /> Your email (optional)
             </span>
             <input
               type="email"
-              value={data.fromEmail}
-              onChange={handleChange('fromEmail')}
+              value={data.senderEmail}
+              onChange={handleChange('senderEmail')}
               placeholder="alex@email.com"
               className="rounded-2xl border px-4 py-3 text-sm outline-none"
             />
@@ -71,8 +136,8 @@ export default function HostCreation({ data, setData, onCreate, shareUrl, onPrev
             </span>
             <input
               type="text"
-              value={data.to}
-              onChange={handleChange('to')}
+              value={data.receiverName}
+              onChange={handleChange('receiverName')}
               placeholder="Jamie"
               className="rounded-2xl border px-4 py-3 text-sm outline-none"
             />
@@ -80,12 +145,12 @@ export default function HostCreation({ data, setData, onCreate, shareUrl, onPrev
 
           <label className="grid gap-2 text-sm font-semibold text-gray-700">
             <span className="flex items-center gap-2">
-              <Mail size={16} /> Their email
+              <Mail size={16} /> Their email (optional)
             </span>
             <input
               type="email"
-              value={data.email}
-              onChange={handleChange('email')}
+              value={data.receiverEmail}
+              onChange={handleChange('receiverEmail')}
               placeholder="jamie@email.com"
               className="rounded-2xl border px-4 py-3 text-sm outline-none"
             />
@@ -93,84 +158,79 @@ export default function HostCreation({ data, setData, onCreate, shareUrl, onPrev
 
           <label className="grid gap-2 text-sm font-semibold text-gray-700">
             <span className="flex items-center gap-2">
-              <PenLine size={16} /> Intro message
+              <PenLine size={16} /> Letter message (optional)
             </span>
             <textarea
               rows={4}
-              value={data.intro}
-              onChange={handleChange('intro')}
+              value={data.letterMessage}
+              onChange={handleChange('letterMessage')}
               placeholder="I've been wanting to ask you something…"
               className="rounded-2xl border px-4 py-3 text-sm outline-none"
             />
           </label>
-
-          <div className="grid gap-2 text-sm font-semibold text-gray-700">
-            <span className="flex items-center gap-2">
-              <Palette size={16} /> Theme
-            </span>
-            <div className="grid gap-3 sm:grid-cols-3">
-              {themeCards.map((themeCard) => {
-                const isActive = data.theme === themeCard.key;
-                const theme = themes[themeCard.key];
-                return (
-                  <button
-                    key={themeCard.key}
-                    type="button"
-                    onClick={() => setData({ ...data, theme: themeCard.key })}
-                    className="flex h-24 flex-col items-center justify-center gap-2 rounded-2xl border text-xs font-semibold transition"
-                    style={{
-                      borderColor: isActive ? theme?.primary : '#e5e7eb',
-                      backgroundColor: isActive ? theme?.secondary : 'white',
-                      boxShadow: isActive ? `0 0 0 3px ${theme?.primary}40` : 'none',
-                    }}
-                    aria-pressed={isActive}
-                  >
-                    <span className="text-2xl">{themeCard.emoji}</span>
-                    <span>{themeCard.key}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
         </div>
+
+        {error ? <p className="mt-4 text-sm text-rose-600">{error}</p> : null}
 
         <button
           type="button"
-          onClick={onCreate}
-          className="mt-8 w-full rounded-full bg-rose-500 px-6 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-rose-600"
+          onClick={handleCreate}
+          disabled={isLoading}
+          className="mt-6 w-full rounded-full bg-rose-500 px-6 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-rose-600 disabled:cursor-not-allowed disabled:opacity-70"
         >
-          Generate Valentine Link
+          {isLoading ? 'Generating…' : 'Generate Valentine Link'}
         </button>
 
-        {shareUrl ? (
+        {links ? (
           <div className="mt-6 rounded-3xl bg-rose-50 px-6 py-5">
-            <p className="text-sm font-semibold text-rose-600">Your Valentine link:</p>
+            <p className="text-sm font-semibold text-rose-600">Receiver link (send this):</p>
             <div className="mt-3 flex items-center gap-3 rounded-2xl bg-white px-4 py-3 shadow-sm">
               <Link2 size={16} className="text-rose-300" />
               <input
                 type="text"
-                value={shareUrl}
+                value={receiverLink}
                 readOnly
                 className="w-full bg-transparent text-xs text-rose-500 outline-none"
               />
               <button
                 type="button"
-                onClick={handleCopy}
+                onClick={() => handleCopy('receiver', receiverLink)}
                 className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-rose-300 text-rose-500 transition hover:bg-rose-100"
-                aria-label="Copy link"
+                aria-label="Copy receiver link"
               >
                 <Copy size={14} />
               </button>
             </div>
-            <button
-              type="button"
-              onClick={onPreview}
-              className="mt-4 inline-flex items-center justify-center gap-2 text-sm font-semibold text-rose-600"
-            >
-              <Eye size={16} />
-              Preview Experience ✨
-            </button>
-            {copied ? <p className="mt-2 text-xs text-rose-400">Link copied!</p> : null}
+            {copied.receiver ? <p className="mt-2 text-xs text-rose-400">Receiver link copied!</p> : null}
+
+            <p className="mt-5 text-sm font-semibold text-rose-600">Results link (keep for you):</p>
+            <div className="mt-3 flex items-center gap-3 rounded-2xl bg-white px-4 py-3 shadow-sm">
+              <Link2 size={16} className="text-rose-300" />
+              <input
+                type="text"
+                value={resultsLink}
+                readOnly
+                className="w-full bg-transparent text-xs text-rose-500 outline-none"
+              />
+              <button
+                type="button"
+                onClick={() => handleCopy('results', resultsLink)}
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-rose-300 text-rose-500 transition hover:bg-rose-100"
+                aria-label="Copy results link"
+              >
+                <Copy size={14} />
+              </button>
+            </div>
+            {copied.results ? <p className="mt-2 text-xs text-rose-400">Results link copied!</p> : null}
+
+            <div className="mt-5 flex flex-wrap gap-3">
+              <a
+                href={draftMailto}
+                className="inline-flex items-center gap-2 rounded-full bg-rose-500 px-5 py-2 text-xs font-semibold text-white shadow-md transition hover:bg-rose-600"
+              >
+                <Mail size={14} /> Draft Email 💌
+              </a>
+            </div>
           </div>
         ) : null}
       </div>

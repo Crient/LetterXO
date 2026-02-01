@@ -1,24 +1,35 @@
-import { Copy, Send } from 'lucide-react';
+import { Copy, Link2, Mail, Send } from 'lucide-react';
 import { useState } from 'react';
 
-export default function MemoryPage({ data, plan, theme, onSend, onReplay }) {
-  const [copied, setCopied] = useState(false);
+export default function MemoryPage({
+  data,
+  plan,
+  theme,
+  onSend,
+  onReplay,
+  isSubmitting,
+  submitError,
+  resultsLink,
+  replyMailto,
+}) {
+  const [copiedResults, setCopiedResults] = useState(false);
   const [note, setNote] = useState('');
 
   const primary = '#BE3A5A';
-  const accent = theme?.accent || '#3b1f2a';
-  const place = plan.customPlan || 'Anywhere with you 💕';
-  const summaryText = `From: ${data.from || 'Anonymous'}\nTo: ${data.to || 'Valentine'}\nFood: ${
-    plan.food || 'Not chosen'
-  }\nPlace: ${place}\nNote: ${note || 'No note'}`;
+  const mainPlan = plan.customPlan || plan.mainPlan || 'No choice yet';
+  const place = plan.placeText || 'Anywhere with you 💕';
+  const vibe = plan.vibe || 'No vibe yet';
+  const placePref = plan.placePref || '';
+  const submitLabel = resultsLink ? 'Update your answer' : 'Submit your answer';
 
-  const handleCopy = async () => {
+  const handleCopyResults = async () => {
+    if (!resultsLink) return;
     try {
-      await navigator.clipboard.writeText(summaryText);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      await navigator.clipboard.writeText(resultsLink);
+      setCopiedResults(true);
+      setTimeout(() => setCopiedResults(false), 2000);
     } catch {
-      setCopied(false);
+      setCopiedResults(false);
     }
   };
 
@@ -50,17 +61,27 @@ export default function MemoryPage({ data, plan, theme, onSend, onReplay }) {
             </span>
           </div>
           <div className="flex items-center justify-between border-b border-pink-200/70 py-3 text-black">
+            <span className="font-semibold">Vibe</span>
+            <span className="font-semibold">{vibe}</span>
+          </div>
+          <div className="flex items-center justify-between border-b border-pink-200/70 py-3 text-black">
+            <span className="font-semibold">Plan</span>
+            <span className="font-semibold">{mainPlan}</span>
+          </div>
+          <div className="flex items-center justify-between border-b border-pink-200/70 py-3 text-black">
             <span className="font-semibold">Food</span>
-            <span className="font-semibold">
-              {plan.food || 'No choice yet'}
-            </span>
+            <span className="font-semibold">{plan.food || 'No choice yet'}</span>
           </div>
           <div className="flex items-center justify-between py-3 text-black">
             <span className="font-semibold">Place</span>
-            <span className="font-semibold">
-              {place}
-            </span>
+            <span className="font-semibold">{place}</span>
           </div>
+          {placePref ? (
+            <div className="flex items-center justify-between border-t border-pink-200/70 py-3 text-black">
+              <span className="font-semibold">Place pref</span>
+              <span className="font-semibold">{placePref}</span>
+            </div>
+          ) : null}
         </div>
 
         <div className="mt-6 space-y-2 text-left">
@@ -78,22 +99,16 @@ export default function MemoryPage({ data, plan, theme, onSend, onReplay }) {
         <div className="mt-6 space-y-3">
           <button
             type="button"
-            onClick={onSend}
-            className="w-full rounded-3xl px-6 py-3 text-sm font-semibold text-white shadow-lg transition"
+            onClick={() => onSend?.(note)}
+            disabled={isSubmitting}
+            className="w-full rounded-3xl px-6 py-3 text-sm font-semibold text-white shadow-lg transition disabled:cursor-not-allowed disabled:opacity-70"
             style={{ backgroundColor: primary }}
           >
             <Send size={16} className="mr-2 inline" />
-            Send to Your Valentine
+            {isSubmitting ? 'Submitting…' : submitLabel}
           </button>
+          {submitError ? <p className="text-xs text-rose-600">{submitError}</p> : null}
           <div className="flex flex-wrap gap-3">
-            <button
-              type="button"
-              onClick={handleCopy}
-              className="flex-1 rounded-full border px-4 py-2 text-center text-xs font-semibold transition hover:bg-rose-50"
-              style={{ borderColor: primary, color: primary }}
-            >
-              {copied ? 'Copied!' : 'Copy Link'}
-            </button>
             <button
               type="button"
               onClick={onReplay}
@@ -104,6 +119,38 @@ export default function MemoryPage({ data, plan, theme, onSend, onReplay }) {
             </button>
           </div>
         </div>
+
+        {resultsLink ? (
+          <div className="mt-6 rounded-3xl bg-rose-50 px-6 py-5">
+            <p className="text-sm font-semibold text-rose-600">Your results link:</p>
+            <div className="mt-3 flex items-center gap-3 rounded-2xl bg-white px-4 py-3 shadow-sm">
+              <Link2 size={16} className="text-rose-300" />
+              <input
+                type="text"
+                value={resultsLink}
+                readOnly
+                className="w-full bg-transparent text-xs text-rose-500 outline-none"
+              />
+              <button
+                type="button"
+                onClick={handleCopyResults}
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-rose-300 text-rose-500 transition hover:bg-rose-100"
+                aria-label="Copy results link"
+              >
+                <Copy size={14} />
+              </button>
+            </div>
+            {copiedResults ? <p className="mt-2 text-xs text-rose-400">Results link copied!</p> : null}
+            <div className="mt-4">
+              <a
+                href={replyMailto}
+                className="inline-flex items-center gap-2 rounded-full bg-rose-500 px-5 py-2 text-xs font-semibold text-white shadow-md transition hover:bg-rose-600"
+              >
+                <Mail size={14} /> Draft Reply Email 💌
+              </a>
+            </div>
+          </div>
+        ) : null}
       </div>
     </div>
   );

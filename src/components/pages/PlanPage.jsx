@@ -1,4 +1,4 @@
-import { Activity, Sparkles, Utensils } from 'lucide-react';
+import { Activity, Compass, MapPin, Sparkles, Utensils } from 'lucide-react';
 
 const VIBE_OPTIONS = ['Cozy', 'Fancy', 'Fun', 'Chill', 'Surprise me'];
 const MAIN_OPTIONS = [
@@ -17,6 +17,7 @@ const FOOD_OPTIONS = [
   { label: 'Steakhouse', emoji: '🥩' },
   { label: 'Dessert', emoji: '🍰' },
 ];
+const PLACE_PREF_OPTIONS = ['Indoor', 'Outdoor', 'Either', 'Surprise me'];
 
 export default function PlanPage({ theme, plan, setPlan, onNext, pageIndex, total, onDotClick, setToast }) {
   const primary = theme?.primary || '#e46a6a';
@@ -175,6 +176,47 @@ export default function PlanPage({ theme, plan, setPlan, onNext, pageIndex, tota
             >
               Surprise me
             </button>
+          </section>
+
+          <section className="space-y-3">
+            <div className="flex items-center gap-2 text-sm font-semibold">
+              <MapPin size={18} className="text-pink-500" aria-hidden="true" />
+              <span>Any place in mind? (optional)</span>
+            </div>
+            <input
+              type="text"
+              value={plan.placeText}
+              onChange={(event) => updatePlan({ placeText: event.target.value })}
+              placeholder="Your favorite cafe, a cozy spot..."
+              className="w-full rounded-2xl border px-4 py-3 text-sm shadow-sm outline-none"
+              style={{ borderColor: primary }}
+            />
+          </section>
+
+          <section className="space-y-3">
+            <div className="flex items-center gap-2 text-sm font-semibold">
+              <Compass size={18} className="text-pink-500" aria-hidden="true" />
+              <span>Place preference (optional)</span>
+            </div>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              {PLACE_PREF_OPTIONS.map((option) => {
+                const isActive = plan.placePref === option;
+                return (
+                  <button
+                    key={option}
+                    type="button"
+                    onClick={() => updatePlan({ placePref: option })}
+                    className="rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-wide transition"
+                    style={{
+                      ...buttonVisual(isActive),
+                      borderWidth: 1,
+                    }}
+                  >
+                    {option}
+                  </button>
+                );
+              })}
+            </div>
           </section>
 
           <button
