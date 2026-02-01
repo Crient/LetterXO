@@ -7,7 +7,7 @@ import MemoryPage from './pages/MemoryPage.jsx';
 import PlanPage from './pages/PlanPage.jsx';
 import QuestionPage from './pages/QuestionPage.jsx';
 import themes from '../config/themes.js';
-import { buildReceiverToHostMailto } from '../utils/mailto.js';
+import { buildReceiverToHostGmail, buildReceiverToHostMailto } from '../utils/mailto.js';
 
 const PAGE_SWING_MS = 900;
 const PAGE_SWING_DISTANCE = '100vw';
@@ -92,6 +92,16 @@ export default function ValentineExperience({ valentine, onSubmitResponse }) {
   const replyMailto = useMemo(() => {
     if (!resultsLink) return '';
     return buildReceiverToHostMailto({
+      senderName: valentine?.sender_name || '',
+      senderEmail: valentine?.sender_email || '',
+      receiverName: valentine?.receiver_name || '',
+      resultsLink,
+    });
+  }, [resultsLink, valentine]);
+
+  const replyGmail = useMemo(() => {
+    if (!resultsLink) return '';
+    return buildReceiverToHostGmail({
       senderName: valentine?.sender_name || '',
       senderEmail: valentine?.sender_email || '',
       receiverName: valentine?.receiver_name || '',
@@ -197,6 +207,7 @@ export default function ValentineExperience({ valentine, onSubmitResponse }) {
             submitError={submitState.error}
             resultsLink={resultsLink}
             replyMailto={replyMailto}
+            replyGmail={replyGmail}
           />
         );
       default:

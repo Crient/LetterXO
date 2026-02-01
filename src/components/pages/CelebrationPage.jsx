@@ -38,17 +38,17 @@ export default function CelebrationPage({ theme, onNext, pageIndex, total, onDot
                 className="confetti-piece absolute animate-confetti"
                 style={{
                   left: `${piece.left}%`,
-                  top: 0,
+                  top: '-12vh',
                   width: `${piece.width}px`,
                   height: `${piece.height}px`,
                   borderRadius: piece.radius,
-                  opacity: piece.opacity,
                   backgroundColor: colors[piece.id % colors.length],
                   animationDelay: `${piece.delay}s`,
                   animationDuration: `${piece.duration}s`,
                   animationTimingFunction: 'linear',
                   '--confetti-drift': `${piece.drift}px`,
                   '--confetti-rotate': `${piece.rotate}deg`,
+                  '--confetti-opacity': piece.opacity,
                 }}
               />
             ))}

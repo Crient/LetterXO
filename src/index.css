@@ -72,6 +72,13 @@ body {
   width: 10px;
   height: 16px;
   border-radius: 3px;
+  opacity: 0;
+  transform: translate3d(0, -20vh, 0);
+  will-change: transform, opacity;
+}
+
+.animate-confetti {
+  animation-fill-mode: both;
 }
 
 .envelope-3d {

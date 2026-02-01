@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Copy, Link2, Mail, PenLine, User, Users } from 'lucide-react';
-import { buildHostToReceiverMailto } from '../../utils/mailto.js';
+import { buildHostToReceiverGmail, buildHostToReceiverMailto } from '../../utils/mailto.js';
 
 const DEFAULT_MESSAGE = "I've been wanting to ask you something…";
 
@@ -29,6 +29,17 @@ export default function HostCreation() {
   const draftMailto = useMemo(() => {
     if (!receiverLink) return '';
     return buildHostToReceiverMailto({
+      senderName: data.senderName.trim(),
+      receiverName: data.receiverName.trim(),
+      receiverEmail: data.receiverEmail.trim(),
+      receiverLink,
+      letterMessage: data.letterMessage.trim(),
+    });
+  }, [data, receiverLink]);
+
+  const draftGmail = useMemo(() => {
+    if (!receiverLink) return '';
+    return buildHostToReceiverGmail({
       senderName: data.senderName.trim(),
       receiverName: data.receiverName.trim(),
       receiverEmail: data.receiverEmail.trim(),
@@ -224,11 +235,22 @@ export default function HostCreation() {
             {copied.results ? <p className="mt-2 text-xs text-rose-400">Results link copied!</p> : null}
 
             <div className="mt-5 flex flex-wrap gap-3">
-              <a
-                href={draftMailto}
+              <button
+                type="button"
+                onClick={() => {
+                  if (draftMailto) window.location.href = draftMailto;
+                }}
                 className="inline-flex items-center gap-2 rounded-full bg-rose-500 px-5 py-2 text-xs font-semibold text-white shadow-md transition hover:bg-rose-600"
               >
                 <Mail size={14} /> Draft Email 💌
+              </button>
+              <a
+                href={draftGmail}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 rounded-full border border-rose-300 px-5 py-2 text-xs font-semibold text-rose-600 transition hover:bg-rose-100"
+              >
+                Open in Gmail
               </a>
             </div>
           </div>

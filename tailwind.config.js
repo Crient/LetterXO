@@ -5,7 +5,7 @@ export default {
     extend: {
       animation: {
         float: 'floatUp var(--float-dur, 16s) linear infinite',
-        confetti: 'confetti 3.2s ease-in-out infinite',
+        confetti: 'confetti var(--confetti-duration, 4.6s) linear forwards',
         pop: 'pop 0.4s ease-out',
       },
       keyframes: {
@@ -16,10 +16,10 @@ export default {
         },
         confetti: {
           '0%': {
-            transform: 'translate3d(0, -10vh, 0) rotate(var(--confetti-rotate, 0deg))',
+            transform: 'translate3d(0, -20vh, 0) rotate(var(--confetti-rotate, 0deg))',
             opacity: '0',
           },
-          '10%': { opacity: '1' },
+          '10%': { opacity: 'var(--confetti-opacity, 1)' },
           '100%': {
             transform:
               'translate3d(var(--confetti-drift, 0px), 120vh, 0) rotate(calc(var(--confetti-rotate, 0deg) + 720deg))',

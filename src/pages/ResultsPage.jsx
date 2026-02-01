@@ -125,12 +125,8 @@ export default function ResultsPage() {
                 <span>{result.food || '—'}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="font-semibold">Place</span>
+                <span className="font-semibold">Notes</span>
                 <span>{result.place_text || '—'}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="font-semibold">Place preference</span>
-                <span>{result.place_pref || '—'}</span>
               </div>
             </div>
           </div>

@@ -11,15 +11,15 @@ export default function MemoryPage({
   submitError,
   resultsLink,
   replyMailto,
+  replyGmail,
 }) {
   const [copiedResults, setCopiedResults] = useState(false);
   const [note, setNote] = useState('');
 
   const primary = '#BE3A5A';
   const mainPlan = plan.customPlan || plan.mainPlan || 'No choice yet';
-  const place = plan.placeText || 'Anywhere with you 💕';
+  const notes = plan.placeText || 'No notes yet';
   const vibe = plan.vibe || 'No vibe yet';
-  const placePref = plan.placePref || '';
   const submitLabel = resultsLink ? 'Update your answer' : 'Submit your answer';
 
   const handleCopyResults = async () => {
@@ -73,15 +73,9 @@ export default function MemoryPage({
             <span className="font-semibold">{plan.food || 'No choice yet'}</span>
           </div>
           <div className="flex items-center justify-between py-3 text-black">
-            <span className="font-semibold">Place</span>
-            <span className="font-semibold">{place}</span>
+            <span className="font-semibold">Notes</span>
+            <span className="font-semibold">{notes}</span>
           </div>
-          {placePref ? (
-            <div className="flex items-center justify-between border-t border-pink-200/70 py-3 text-black">
-              <span className="font-semibold">Place pref</span>
-              <span className="font-semibold">{placePref}</span>
-            </div>
-          ) : null}
         </div>
 
         <div className="mt-6 space-y-2 text-left">
@@ -142,12 +136,25 @@ export default function MemoryPage({
             </div>
             {copiedResults ? <p className="mt-2 text-xs text-rose-400">Results link copied!</p> : null}
             <div className="mt-4">
-              <a
-                href={replyMailto}
-                className="inline-flex items-center gap-2 rounded-full bg-rose-500 px-5 py-2 text-xs font-semibold text-white shadow-md transition hover:bg-rose-600"
-              >
-                <Mail size={14} /> Draft Reply Email 💌
-              </a>
+              <div className="flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (replyMailto) window.location.href = replyMailto;
+                  }}
+                  className="inline-flex items-center gap-2 rounded-full bg-rose-500 px-5 py-2 text-xs font-semibold text-white shadow-md transition hover:bg-rose-600"
+                >
+                  <Mail size={14} /> Draft Reply Email 💌
+                </button>
+                <a
+                  href={replyGmail}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-2 rounded-full border border-rose-300 px-5 py-2 text-xs font-semibold text-rose-600 transition hover:bg-rose-100"
+                >
+                  Open in Gmail
+                </a>
+              </div>
             </div>
           </div>
         ) : null}
