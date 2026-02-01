@@ -24,7 +24,9 @@ const initialHostData = {
 
 const initialPlan = {
   food: '',
-  location: '',
+  vibe: '',
+  mainPlan: '',
+  customPlan: '',
 };
 
 function buildShareUrl(data, includePreview = false) {
@@ -247,6 +249,7 @@ export default function App() {
             pageIndex={pageIndex}
             total={totalSteps}
             onDotClick={(index) => startPageTransition(index + 1)}
+            setToast={setToast}
           />
         );
       case 5:
@@ -275,6 +278,13 @@ export default function App() {
     return null;
   }
 
+  const toastElement = toast ? (
+    <div className="fixed bottom-6 right-6 z-50 max-w-sm rounded-2xl bg-rose-500 px-6 py-4 text-white shadow-xl">
+      <p className="text-sm font-semibold">{toast.title}</p>
+      <p className="mt-1 text-xs text-rose-100">{toast.message}</p>
+    </div>
+  ) : null;
+
   if (mode === 'create') {
     return (
       <>
@@ -285,25 +295,22 @@ export default function App() {
           shareUrl={shareUrl}
           onPreview={handlePreview}
         />
-        {toast ? (
-          <div className="fixed bottom-6 right-6 z-50 max-w-sm rounded-2xl bg-rose-500 px-6 py-4 text-white shadow-xl">
-            <p className="text-sm font-semibold">{toast.title}</p>
-            <p className="mt-1 text-xs text-rose-100">{toast.message}</p>
-          </div>
-        ) : null}
+        {toastElement}
       </>
     );
   }
 
   return (
-    <div className="relative h-screen overflow-hidden">
-      {mode === 'preview' ? <PreviewBanner onExit={handleExitPreview} /> : null}
-      <div
-        className={`relative flex h-full items-center justify-center px-4 ${
-          mode === 'preview' ? 'pt-16 pb-12' : 'py-12'
-        }`}
-      >
-        <FloatingHearts color={theme.primary} />
+    <>
+      {toastElement}
+      <div className="relative h-screen overflow-hidden">
+        {mode === 'preview' ? <PreviewBanner onExit={handleExitPreview} /> : null}
+        <div
+          className={`relative flex h-full items-center justify-center px-4 ${
+            mode === 'preview' ? 'pt-16 pb-12' : 'py-12'
+          }`}
+        >
+          <FloatingHearts color={theme.primary} />
         <div className="relative z-10 w-full max-w-4xl">
           {(page === 0 || letterTransition) && (
             <div
@@ -353,5 +360,6 @@ export default function App() {
         </div>
       </div>
     </div>
+  </>
   );
 }

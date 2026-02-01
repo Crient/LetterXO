@@ -15,9 +15,16 @@ export default {
           '100%': { transform: 'translateY(-120vh) scale(1.2)', opacity: '0' },
         },
         confetti: {
-          '0%': { transform: 'translateY(0) rotate(0deg)', opacity: '0' },
+          '0%': {
+            transform: 'translate3d(0, -10vh, 0) rotate(var(--confetti-rotate, 0deg))',
+            opacity: '0',
+          },
           '10%': { opacity: '1' },
-          '100%': { transform: 'translateY(120vh) rotate(720deg)', opacity: '0' },
+          '100%': {
+            transform:
+              'translate3d(var(--confetti-drift, 0px), 120vh, 0) rotate(calc(var(--confetti-rotate, 0deg) + 720deg))',
+            opacity: '0',
+          },
         },
         pop: {
           '0%': { transform: 'scale(0.95)', opacity: '0.6' },

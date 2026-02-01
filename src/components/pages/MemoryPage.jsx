@@ -1,89 +1,110 @@
-import { Copy, RotateCcw, Send } from 'lucide-react';
+import { Copy, Send } from 'lucide-react';
 import { useState } from 'react';
-import LetterBackground from '../LetterBackground.jsx';
 
-export default function MemoryPage({ data, plan, theme, onSend, onReplay, pageIndex, total, onDotClick }) {
+export default function MemoryPage({ data, plan, theme, onSend, onReplay }) {
   const [copied, setCopied] = useState(false);
+  const [note, setNote] = useState('');
 
-  const summary = `From: ${data.from || 'Anonymous'}\nFrom email: ${data.fromEmail || 'Not provided'}\nTo: ${data.to || 'Valentine'}\nRecipient email: ${data.email || 'Not provided'}\nTheme: ${data.theme}\nMessage: ${data.intro || 'No intro message'}\nFood: ${plan.food || 'Not chosen'}\nLocation: ${plan.location || 'Not set'}`;
+  const primary = '#BE3A5A';
+  const accent = theme?.accent || '#3b1f2a';
+  const place = plan.customPlan || 'Anywhere with you 💕';
+  const summaryText = `From: ${data.from || 'Anonymous'}\nTo: ${data.to || 'Valentine'}\nFood: ${
+    plan.food || 'Not chosen'
+  }\nPlace: ${place}\nNote: ${note || 'No note'}`;
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(summary);
+      await navigator.clipboard.writeText(summaryText);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    } catch (error) {
+    } catch {
       setCopied(false);
     }
   };
 
   return (
-    <LetterBackground theme={theme} page={pageIndex} total={total} onDotClick={onDotClick}>
-      <div className="space-y-6 text-center">
-        <div>
-          <h2 className="font-cursive text-4xl" style={{ color: theme?.accent }}>
-            A memory to keep
-          </h2>
-          <p className="mt-2 text-sm text-gray-600">Here is a quick recap of your Valentine moment.</p>
+    <div className="flex w-full items-center justify-center px-4 py-6">
+      <div
+        className="w-full max-w-xl rounded-[2.5rem] p-8 shadow-[0_30px_70px_rgba(233,77,140,0.25)]"
+        style={{ backgroundColor: '#FAF7F5' }}
+      >
+        <div className="space-y-2 text-center">
+          <h1 className="valentine-title text-7xl font-bold" style={{ color: primary }}>
+            Your Valentine
+          </h1>
+          <div className="mx-auto -mt-1 -mb-1 h-8 w-56 overflow-hidden sm:h-10 sm:w-72">
+            <img
+              src="/underline_xo.png"
+              alt="XOXO underline"
+              className="h-full w-full object-cover object-center"
+            />
+          </div>
+          <p className="text-sm text-gray-500">This was made just for you.</p>
         </div>
 
-        <div className="rounded-2xl border px-6 py-4 text-left text-sm" style={{ borderColor: theme?.primary }}>
-          <p>
-            <span className="font-semibold">From:</span> {data.from || 'Anonymous'}
-          </p>
-          <p>
-            <span className="font-semibold">From email:</span> {data.fromEmail || 'Not provided'}
-          </p>
-          <p>
-            <span className="font-semibold">To:</span> {data.to || 'Valentine'}
-          </p>
-          <p>
-            <span className="font-semibold">Recipient email:</span> {data.email || 'Not provided'}
-          </p>
-          <p>
-            <span className="font-semibold">Theme:</span> {data.theme}
-          </p>
-          <p>
-            <span className="font-semibold">Message:</span> {data.intro || 'No intro message'}
-          </p>
-          <p>
-            <span className="font-semibold">Food:</span> {plan.food || 'Not chosen'}
-          </p>
-          <p>
-            <span className="font-semibold">Location:</span> {plan.location || 'Not set'}
-          </p>
+        <div className="mt-5 rounded-[2rem] px-6 py-4 text-sm" style={{ backgroundColor: '#F5E4E8' }}>
+          <div className="flex items-center justify-between border-b border-pink-200/70 py-3 text-black">
+            <span className="font-semibold">For</span>
+            <span className="font-cursive text-lg" style={{ color: '#E54A7B' }}>
+              {data.to || 'Valentine'}
+            </span>
+          </div>
+          <div className="flex items-center justify-between border-b border-pink-200/70 py-3 text-black">
+            <span className="font-semibold">Food</span>
+            <span className="font-semibold">
+              {plan.food || 'No choice yet'}
+            </span>
+          </div>
+          <div className="flex items-center justify-between py-3 text-black">
+            <span className="font-semibold">Place</span>
+            <span className="font-semibold">
+              {place}
+            </span>
+          </div>
         </div>
 
-        <div className="flex flex-wrap justify-center gap-3">
+        <div className="mt-6 space-y-2 text-left">
+          <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: primary }}>
+            Add a little note? (optional)
+          </p>
+          <textarea
+            value={note}
+            onChange={(event) => setNote(event.target.value)}
+            placeholder="Write something sweet..."
+            className="min-h-[140px] w-full resize-none rounded-2xl border border-pink-200 bg-white px-4 py-4 text-sm shadow-sm outline-none transition focus:border-pink-400"
+          />
+        </div>
+
+        <div className="mt-6 space-y-3">
           <button
             type="button"
             onClick={onSend}
-            className="inline-flex items-center gap-2 rounded-full px-5 py-2 text-xs font-semibold shadow-md transition"
-            style={{ backgroundColor: theme?.primary, color: theme?.buttonText }}
+            className="w-full rounded-3xl px-6 py-3 text-sm font-semibold text-white shadow-lg transition"
+            style={{ backgroundColor: primary }}
           >
-            <Send size={14} />
-            Send to host
+            <Send size={16} className="mr-2 inline" />
+            Send to Your Valentine
           </button>
-          <button
-            type="button"
-            onClick={handleCopy}
-            className="inline-flex items-center gap-2 rounded-full border px-5 py-2 text-xs font-semibold shadow-sm transition"
-            style={{ borderColor: theme?.primary, color: theme?.accent }}
-          >
-            <Copy size={14} />
-            {copied ? 'Copied!' : 'Copy summary'}
-          </button>
-          <button
-            type="button"
-            onClick={onReplay}
-            className="inline-flex items-center gap-2 rounded-full border px-5 py-2 text-xs font-semibold shadow-sm transition"
-            style={{ borderColor: theme?.primary, color: theme?.accent }}
-          >
-            <RotateCcw size={14} />
-            Replay
-          </button>
+          <div className="flex flex-wrap gap-3">
+            <button
+              type="button"
+              onClick={handleCopy}
+              className="flex-1 rounded-full border px-4 py-2 text-center text-xs font-semibold transition hover:bg-rose-50"
+              style={{ borderColor: primary, color: primary }}
+            >
+              {copied ? 'Copied!' : 'Copy Link'}
+            </button>
+            <button
+              type="button"
+              onClick={onReplay}
+              className="flex-1 rounded-full border px-4 py-2 text-center text-xs font-semibold transition hover:bg-rose-50"
+              style={{ borderColor: primary, color: primary }}
+            >
+              Replay
+            </button>
+          </div>
         </div>
       </div>
-    </LetterBackground>
+    </div>
   );
 }
