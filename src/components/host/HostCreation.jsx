@@ -21,6 +21,7 @@ export default function HostCreation() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [emailMenuOpen, setEmailMenuOpen] = useState(false);
+  const [spamNotice, setSpamNotice] = useState(false);
   const emailMenuRef = useRef(null);
 
   const handleChange = (field) => (event) => {
@@ -62,6 +63,12 @@ export default function HostCreation() {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    if (!spamNotice) return;
+    const timer = setTimeout(() => setSpamNotice(false), 4200);
+    return () => clearTimeout(timer);
+  }, [spamNotice]);
 
   const handleCopy = async (type, value) => {
     if (!value) return;
@@ -272,6 +279,7 @@ export default function HostCreation() {
                       type="button"
                       onClick={() => {
                         setEmailMenuOpen(false);
+                        setSpamNotice(true);
                         setDraftOpen(true);
                       }}
                       className="block w-full rounded-xl px-3 py-2 text-left font-semibold text-rose-600 transition hover:bg-rose-50"
@@ -282,7 +290,10 @@ export default function HostCreation() {
                       href={draftGmail}
                       target="_blank"
                       rel="noreferrer"
-                      onClick={() => setEmailMenuOpen(false)}
+                      onClick={() => {
+                        setEmailMenuOpen(false);
+                        setSpamNotice(true);
+                      }}
                       className="mt-1 block w-full rounded-xl px-3 py-2 text-left font-semibold text-rose-600 transition hover:bg-rose-50"
                     >
                       Open in Gmail
@@ -301,10 +312,18 @@ export default function HostCreation() {
             </div>
           </div>
         ) : null}
+      </div>
+      {spamNotice ? (
+        <div className="fixed right-6 top-6 z-50 w-[280px] rounded-2xl border border-rose-100 bg-white/95 p-4 text-xs text-rose-700 shadow-xl">
+          <p className="text-sm font-semibold text-rose-600">Quick heads-up</p>
+          <p className="mt-1 text-xs text-rose-500">
+            If they don’t see your email, ask them to check Spam/Promotions too.
+          </p>
         </div>
-        <EmailDraftModal
-          open={draftOpen}
-          onClose={() => setDraftOpen(false)}
+      ) : null}
+      <EmailDraftModal
+        open={draftOpen}
+        onClose={() => setDraftOpen(false)}
           title="Draft email / message"
           subject={draftContent?.subject}
           body={draftContent?.body}

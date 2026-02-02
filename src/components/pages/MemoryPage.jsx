@@ -18,6 +18,7 @@ export default function MemoryPage({
   const [note, setNote] = useState('');
   const [emailMenuOpen, setEmailMenuOpen] = useState(false);
   const [draftOpen, setDraftOpen] = useState(false);
+  const [spamNotice, setSpamNotice] = useState(false);
   const emailMenuRef = useRef(null);
 
   const primary = '#BE3A5A';
@@ -46,6 +47,12 @@ export default function MemoryPage({
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    if (!spamNotice) return;
+    const timer = setTimeout(() => setSpamNotice(false), 4200);
+    return () => clearTimeout(timer);
+  }, [spamNotice]);
 
   return (
     <div
@@ -158,6 +165,7 @@ export default function MemoryPage({
                         type="button"
                         onClick={() => {
                           setEmailMenuOpen(false);
+                          setSpamNotice(true);
                           setDraftOpen(true);
                         }}
                         className="block w-full rounded-xl px-3 py-2 text-left font-semibold text-rose-600 transition hover:bg-rose-50"
@@ -168,7 +176,10 @@ export default function MemoryPage({
                         href={replyGmail}
                         target="_blank"
                         rel="noreferrer"
-                        onClick={() => setEmailMenuOpen(false)}
+                        onClick={() => {
+                          setEmailMenuOpen(false);
+                          setSpamNotice(true);
+                        }}
                         className="mt-1 block w-full rounded-xl px-3 py-2 text-left font-semibold text-rose-600 transition hover:bg-rose-50"
                       >
                         Open in Gmail
@@ -200,6 +211,14 @@ export default function MemoryPage({
         topName={replyDraft?.topName}
         bottomName={replyDraft?.bottomName}
       />
+      {spamNotice ? (
+        <div className="fixed right-6 top-6 z-50 w-[280px] rounded-2xl border border-rose-100 bg-white/95 p-4 text-xs text-rose-700 shadow-xl">
+          <p className="text-sm font-semibold text-rose-600">Quick heads-up</p>
+          <p className="mt-1 text-xs text-rose-500">
+            If they don’t see your email, ask them to check Spam/Promotions too.
+          </p>
+        </div>
+      ) : null}
     </div>
   );
 }
