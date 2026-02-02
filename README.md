@@ -2,7 +2,6 @@
 
 LetterXO is a Valentine experience where a host creates a private link, the receiver fills it out, and the host views the response — all wrapped in a cute, shareable UI.
 
----
 
 ## Why I Built This
 
@@ -47,7 +46,6 @@ Receiver: Open Link → Experience → Submit
 Host: Open Results Link → View Summary
 ```
 
----
 
 ## Tech Stack
 - React + Vite
