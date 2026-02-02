@@ -81,6 +81,15 @@ body {
   animation-fill-mode: both;
 }
 
+.scrollbar-hidden {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
+
 .envelope-3d {
   perspective: 800px;
 }

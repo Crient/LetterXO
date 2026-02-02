@@ -299,6 +299,9 @@ export default function HostCreation() {
         title="Draft email / message"
         subject={draftContent?.subject}
         body={draftContent?.body}
+        lines={draftContent?.lines}
+        topName={draftContent?.topName}
+        bottomName={draftContent?.bottomName}
       />
     </div>
   );

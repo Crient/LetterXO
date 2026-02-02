@@ -49,11 +49,11 @@ export default function MemoryPage({
 
   return (
     <div
-      className="flex w-full items-start justify-center px-4 py-8"
-      style={{ maxHeight: 'calc(100vh - 6rem)', overflowY: 'auto' }}
+      className="scrollbar-hidden flex h-full w-full flex-col items-center justify-start overflow-y-auto px-4 py-6"
+      style={{ maxHeight: '100vh', marginTop: '20px' }}
     >
       <div
-        className="mb-8 w-full max-w-xl rounded-[2.5rem] p-8 shadow-[0_30px_70px_rgba(233,77,140,0.25)]"
+        className="w-full max-w-xl rounded-[2.5rem] p-6 shadow-[0_30px_70px_rgba(233,77,140,0.25)]"
         style={{ backgroundColor: '#FAF7F5' }}
       >
         <div className="space-y-2 text-center">
@@ -107,7 +107,7 @@ export default function MemoryPage({
           />
         </div>
 
-        <div className="mt-6 space-y-3">
+        <div className="mt-5 space-y-3">
           <button
             type="button"
             onClick={() => onSend?.(note)}
@@ -119,16 +119,6 @@ export default function MemoryPage({
             {isSubmitting ? 'Submitting…' : submitLabel}
           </button>
           {submitError ? <p className="text-xs text-rose-600">{submitError}</p> : null}
-          <div className="flex flex-wrap gap-3">
-            <button
-              type="button"
-              onClick={onReplay}
-              className="flex-1 rounded-full border px-4 py-2 text-center text-xs font-semibold transition hover:bg-rose-50"
-              style={{ borderColor: primary, color: primary }}
-            >
-              Replay
-            </button>
-          </div>
         </div>
 
         {resultsLink ? (
@@ -160,7 +150,7 @@ export default function MemoryPage({
                     onClick={() => setEmailMenuOpen((prev) => !prev)}
                     className="inline-flex items-center gap-2 rounded-full bg-rose-500 px-5 py-2 text-xs font-semibold text-white shadow-md transition hover:bg-rose-600"
                   >
-                    <Mail size={14} /> Send email 💌 <ChevronDown size={14} />
+                    <Mail size={14} /> Send response 💌 <ChevronDown size={14} />
                   </button>
                   {emailMenuOpen ? (
                     <div className="absolute left-0 z-20 mt-2 w-56 rounded-2xl border border-rose-100 bg-white p-2 text-xs shadow-lg">
@@ -172,7 +162,7 @@ export default function MemoryPage({
                         }}
                         className="block rounded-xl px-3 py-2 font-semibold text-rose-600 transition hover:bg-rose-50"
                       >
-                        Draft email / message
+                        Draft response / message
                       </button>
                       <a
                         href={replyGmail}
@@ -186,6 +176,14 @@ export default function MemoryPage({
                     </div>
                   ) : null}
                 </div>
+                <button
+                  type="button"
+                  onClick={onReplay}
+                  className="rounded-full border px-5 py-2 text-center text-xs font-semibold text-rose-600 transition hover:bg-rose-50"
+                  style={{ borderColor: primary }}
+                >
+                  Replay
+                </button>
               </div>
             </div>
           </div>
@@ -197,6 +195,9 @@ export default function MemoryPage({
         title="Draft email / message"
         subject={replyDraft?.subject}
         body={replyDraft?.body}
+        lines={replyDraft?.lines}
+        topName={replyDraft?.topName}
+        bottomName={replyDraft?.bottomName}
       />
     </div>
   );

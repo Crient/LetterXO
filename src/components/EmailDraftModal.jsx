@@ -1,12 +1,22 @@
+import { createPortal } from 'react-dom';
 import { Copy, X } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
-export default function EmailDraftModal({ open, onClose, title, subject, body }) {
+export default function EmailDraftModal({
+  open,
+  onClose,
+  title,
+  subject,
+  body,
+  lines,
+  topName,
+  bottomName,
+}) {
   const [copied, setCopied] = useState(false);
 
-  if (!open) return null;
-
-  const message = `Subject: ${subject || ''}\n\n${body || ''}`.trim();
+  const message = useMemo(() => {
+    return `Subject: ${subject || ''}\n\n${body || ''}`.trim();
+  }, [subject, body]);
 
   useEffect(() => {
     if (open) setCopied(false);
@@ -23,8 +33,15 @@ export default function EmailDraftModal({ open, onClose, title, subject, body })
     }
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+  if (!open) return null;
+
+  const content = (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
+      onClick={(event) => {
+        if (event.target === event.currentTarget) onClose?.();
+      }}
+    >
       <div className="w-full max-w-xl rounded-3xl bg-white p-6 shadow-2xl">
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-semibold text-rose-600">{title || 'Draft email / message'}</h3>
@@ -45,7 +62,28 @@ export default function EmailDraftModal({ open, onClose, title, subject, body })
           </div>
           <div className="rounded-2xl border border-rose-100 bg-white p-3 text-xs text-rose-700">
             <p className="text-[11px] font-semibold uppercase tracking-wide text-rose-400">Message</p>
-            <pre className="mt-2 whitespace-pre-wrap font-sans text-xs text-rose-700">{body || ''}</pre>
+            <div className="mt-2 space-y-2 font-sans text-xs text-rose-700">
+              {(lines && lines.length > 0 ? lines : [body || '']).map((line, index) => {
+                if (!line) return <div key={`line-${index}`} className="h-3" />;
+                if (index === 0 && topName && line.startsWith('Hi ')) {
+                  const suffix = line.slice(`Hi ${topName}`.length);
+                  return (
+                    <div key={`line-${index}`}>
+                      Hi <strong className="font-semibold text-rose-700">{topName}</strong>
+                      {suffix}
+                    </div>
+                  );
+                }
+                if (bottomName && line.trim() === bottomName) {
+                  return (
+                    <div key={`line-${index}`} className="font-semibold text-rose-700">
+                      {bottomName}
+                    </div>
+                  );
+                }
+                return <div key={`line-${index}`}>{line}</div>;
+              })}
+            </div>
           </div>
         </div>
 
@@ -68,4 +106,6 @@ export default function EmailDraftModal({ open, onClose, title, subject, body })
       </div>
     </div>
   );
+
+  return createPortal(content, document.body);
 }

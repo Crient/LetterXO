@@ -42,6 +42,9 @@ function composeHostToReceiver({
   return {
     subject: "Open this when you’re ready 💗",
     body: lines.filter((line) => line !== null).join('\n'),
+    lines,
+    topName: receiverName || '',
+    bottomName: senderName || '',
   };
 }
 
@@ -49,17 +52,20 @@ function composeReceiverToHost({ senderName, receiverName, resultsLink }) {
   const lines = [
     `Hi ${senderName || 'there'},`,
     '',
-    'I finished it.',
+    'I got your message!',
     "Here's the link to see my answer:",
     resultsLink || '',
     '',
-    'Love,',
+    'Yours,',
     receiverName || '',
   ];
 
   return {
     subject: 'Your Valentine answer is ready 💞',
     body: lines.filter((line) => line !== null).join('\n'),
+    lines,
+    topName: senderName || '',
+    bottomName: receiverName || '',
   };
 }
 
