@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Copy, ChevronDown, Link2, Mail, PenLine, User, Users } from 'lucide-react';
-import { buildHostToReceiverGmail, buildHostToReceiverMailto } from '../../utils/mailto.js';
+import EmailDraftModal from '../EmailDraftModal.jsx';
+import { buildHostToReceiverDraft, buildHostToReceiverGmail } from '../../utils/mailto.js';
 
 const DEFAULT_MESSAGE = "I've been wanting to ask you something…";
 
@@ -28,12 +29,11 @@ export default function HostCreation() {
   const receiverLink = links?.receiverLink || '';
   const resultsLink = links?.resultsLink || '';
 
-  const draftMailto = useMemo(() => {
-    if (!receiverLink) return '';
-    return buildHostToReceiverMailto({
+  const draftContent = useMemo(() => {
+    if (!receiverLink) return null;
+    return buildHostToReceiverDraft({
       senderName: data.senderName.trim(),
       receiverName: data.receiverName.trim(),
-      receiverEmail: data.receiverEmail.trim(),
       receiverLink,
       letterMessage: data.letterMessage.trim(),
     });
@@ -49,6 +49,8 @@ export default function HostCreation() {
       letterMessage: data.letterMessage.trim(),
     });
   }, [data, receiverLink]);
+
+  const [draftOpen, setDraftOpen] = useState(false);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -246,7 +248,7 @@ export default function HostCreation() {
             </div>
             {copied.results ? <p className="mt-2 text-xs text-rose-400">Results link copied!</p> : null}
 
-            <div className="mt-5 flex flex-wrap gap-3">
+            <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
               <div className="relative" ref={emailMenuRef}>
                 <button
                   type="button"
@@ -257,13 +259,16 @@ export default function HostCreation() {
                 </button>
                 {emailMenuOpen ? (
                   <div className="absolute left-0 z-20 mt-2 w-56 rounded-2xl border border-rose-100 bg-white p-2 text-xs shadow-lg">
-                    <a
-                      href={draftMailto}
-                      onClick={() => setEmailMenuOpen(false)}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEmailMenuOpen(false);
+                        setDraftOpen(true);
+                      }}
                       className="block rounded-xl px-3 py-2 font-semibold text-rose-600 transition hover:bg-rose-50"
                     >
-                      Draft email (default app)
-                    </a>
+                      Draft email / message
+                    </button>
                     <a
                       href={draftGmail}
                       target="_blank"
@@ -288,6 +293,13 @@ export default function HostCreation() {
           </div>
         ) : null}
       </div>
+      <EmailDraftModal
+        open={draftOpen}
+        onClose={() => setDraftOpen(false)}
+        title="Draft email / message"
+        subject={draftContent?.subject}
+        body={draftContent?.body}
+      />
     </div>
   );
 }

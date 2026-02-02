@@ -1,5 +1,6 @@
 import { ChevronDown, Copy, Link2, Mail, Send } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import EmailDraftModal from '../EmailDraftModal.jsx';
 
 export default function MemoryPage({
   data,
@@ -10,12 +11,13 @@ export default function MemoryPage({
   isSubmitting,
   submitError,
   resultsLink,
-  replyMailto,
+  replyDraft,
   replyGmail,
 }) {
   const [copiedResults, setCopiedResults] = useState(false);
   const [note, setNote] = useState('');
   const [emailMenuOpen, setEmailMenuOpen] = useState(false);
+  const [draftOpen, setDraftOpen] = useState(false);
   const emailMenuRef = useRef(null);
 
   const primary = '#BE3A5A';
@@ -46,9 +48,12 @@ export default function MemoryPage({
   }, []);
 
   return (
-    <div className="flex w-full items-center justify-center px-4 py-6">
+    <div
+      className="flex w-full items-start justify-center px-4 py-8"
+      style={{ maxHeight: 'calc(100vh - 6rem)', overflowY: 'auto' }}
+    >
       <div
-        className="w-full max-w-xl rounded-[2.5rem] p-8 shadow-[0_30px_70px_rgba(233,77,140,0.25)]"
+        className="mb-8 w-full max-w-xl rounded-[2.5rem] p-8 shadow-[0_30px_70px_rgba(233,77,140,0.25)]"
         style={{ backgroundColor: '#FAF7F5' }}
       >
         <div className="space-y-2 text-center">
@@ -148,7 +153,7 @@ export default function MemoryPage({
             </div>
             {copiedResults ? <p className="mt-2 text-xs text-rose-400">Results link copied!</p> : null}
             <div className="mt-4">
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap items-center justify-center gap-3">
                 <div className="relative" ref={emailMenuRef}>
                   <button
                     type="button"
@@ -159,13 +164,16 @@ export default function MemoryPage({
                   </button>
                   {emailMenuOpen ? (
                     <div className="absolute left-0 z-20 mt-2 w-56 rounded-2xl border border-rose-100 bg-white p-2 text-xs shadow-lg">
-                      <a
-                        href={replyMailto}
-                        onClick={() => setEmailMenuOpen(false)}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEmailMenuOpen(false);
+                          setDraftOpen(true);
+                        }}
                         className="block rounded-xl px-3 py-2 font-semibold text-rose-600 transition hover:bg-rose-50"
                       >
-                        Draft email (default app)
-                      </a>
+                        Draft email / message
+                      </button>
                       <a
                         href={replyGmail}
                         target="_blank"
@@ -183,6 +191,13 @@ export default function MemoryPage({
           </div>
         ) : null}
       </div>
+      <EmailDraftModal
+        open={draftOpen}
+        onClose={() => setDraftOpen(false)}
+        title="Draft email / message"
+        subject={replyDraft?.subject}
+        body={replyDraft?.body}
+      />
     </div>
   );
 }
