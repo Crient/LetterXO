@@ -9,6 +9,7 @@ export default function EmailDraftModal({
   subject,
   body,
   lines,
+  displayLines,
   topName,
   bottomName,
 }) {
@@ -34,6 +35,72 @@ export default function EmailDraftModal({
   };
 
   if (!open) return null;
+
+  const renderLine = (entry, index) => {
+    if (!entry) return <div key={`line-${index}`} className="h-3" />;
+    if (typeof entry === 'string') {
+      if (index === 0 && topName && entry.startsWith('Hi ')) {
+        const suffix = entry.slice(`Hi ${topName}`.length);
+        return (
+          <div key={`line-${index}`}>
+            Hi <strong className="font-semibold text-rose-700">{topName}</strong>
+            {suffix}
+          </div>
+        );
+      }
+      if (bottomName && entry.trim() === bottomName) {
+        return (
+          <div key={`line-${index}`} className="font-semibold text-rose-700">
+            {bottomName}
+          </div>
+        );
+      }
+      return <div key={`line-${index}`}>{entry}</div>;
+    }
+
+    if (entry.type === 'spacer') {
+      return <div key={`line-${index}`} className="h-3" />;
+    }
+
+    if (entry.type === 'link') {
+      return (
+        <div key={`line-${index}`}>
+          {entry.prefix || ''}
+          <a
+            href={entry.href || '#'}
+            target="_blank"
+            rel="noreferrer"
+            className="font-semibold text-rose-600 underline"
+          >
+            {entry.text || 'click here'}
+          </a>
+        </div>
+      );
+    }
+
+    if (entry.type === 'text') {
+      const text = entry.text || '';
+      if (index === 0 && topName && text.startsWith('Hi ')) {
+        const suffix = text.slice(`Hi ${topName}`.length);
+        return (
+          <div key={`line-${index}`}>
+            Hi <strong className="font-semibold text-rose-700">{topName}</strong>
+            {suffix}
+          </div>
+        );
+      }
+      if (bottomName && text.trim() === bottomName) {
+        return (
+          <div key={`line-${index}`} className="font-semibold text-rose-700">
+            {bottomName}
+          </div>
+        );
+      }
+      return <div key={`line-${index}`}>{text}</div>;
+    }
+
+    return <div key={`line-${index}`}>{String(entry)}</div>;
+  };
 
   const content = (
     <div
@@ -63,26 +130,12 @@ export default function EmailDraftModal({
           <div className="rounded-2xl border border-rose-100 bg-white p-3 text-xs text-rose-700">
             <p className="text-[11px] font-semibold uppercase tracking-wide text-rose-400">Message</p>
             <div className="mt-2 space-y-2 font-sans text-xs text-rose-700">
-              {(lines && lines.length > 0 ? lines : [body || '']).map((line, index) => {
-                if (!line) return <div key={`line-${index}`} className="h-3" />;
-                if (index === 0 && topName && line.startsWith('Hi ')) {
-                  const suffix = line.slice(`Hi ${topName}`.length);
-                  return (
-                    <div key={`line-${index}`}>
-                      Hi <strong className="font-semibold text-rose-700">{topName}</strong>
-                      {suffix}
-                    </div>
-                  );
-                }
-                if (bottomName && line.trim() === bottomName) {
-                  return (
-                    <div key={`line-${index}`} className="font-semibold text-rose-700">
-                      {bottomName}
-                    </div>
-                  );
-                }
-                return <div key={`line-${index}`}>{line}</div>;
-              })}
+              {(displayLines && displayLines.length > 0
+                ? displayLines
+                : lines && lines.length > 0
+                  ? lines
+                  : [body || '']
+              ).map(renderLine)}
             </div>
           </div>
         </div>

@@ -19,37 +19,45 @@ function encodeGmail({ to, subject, body }) {
   return `https://mail.google.com/mail/?${params.toString()}`;
 }
 
-function composeHostToReceiver({
-  senderName,
-  receiverName,
-  receiverLink,
-  letterMessage,
-}) {
-  const lines = [
+function composeHostToReceiver({ senderName, receiverName, receiverLink }) {
+  const bodyLines = [
     `Hi ${receiverName || 'there'},`,
     '',
     'I made something for you.',
-    'Open this link when you have a quiet moment:',
+    'Open this link whenever you can:',
     receiverLink || '',
+    '',
+    'Love,',
+    senderName || '',
   ];
 
-  if (letterMessage) {
-    lines.push('', `Note: ${letterMessage}`);
-  }
-
-  lines.push('', 'Love,', senderName || '');
+  const displayLines = [
+    { type: 'text', text: `Hi ${receiverName || 'there'},` },
+    { type: 'spacer' },
+    { type: 'text', text: 'I made something for you.' },
+    {
+      type: 'link',
+      prefix: 'Open this link whenever you can: ',
+      text: 'click here',
+      href: receiverLink || '',
+    },
+    { type: 'spacer' },
+    { type: 'text', text: 'Love,' },
+    { type: 'text', text: senderName || '' },
+  ];
 
   return {
     subject: "Open this when you’re ready 💗",
-    body: lines.filter((line) => line !== null).join('\n'),
-    lines,
+    body: bodyLines.filter((line) => line !== null).join('\n'),
+    lines: bodyLines,
+    displayLines,
     topName: receiverName || '',
     bottomName: senderName || '',
   };
 }
 
 function composeReceiverToHost({ senderName, receiverName, resultsLink }) {
-  const lines = [
+  const bodyLines = [
     `Hi ${senderName || 'there'},`,
     '',
     'I got your message!',
@@ -60,10 +68,26 @@ function composeReceiverToHost({ senderName, receiverName, resultsLink }) {
     receiverName || '',
   ];
 
+  const displayLines = [
+    { type: 'text', text: `Hi ${senderName || 'there'},` },
+    { type: 'spacer' },
+    { type: 'text', text: 'I got your message!' },
+    {
+      type: 'link',
+      prefix: "Here's the link to see my answer: ",
+      text: 'click here',
+      href: resultsLink || '',
+    },
+    { type: 'spacer' },
+    { type: 'text', text: 'Yours,' },
+    { type: 'text', text: receiverName || '' },
+  ];
+
   return {
     subject: 'Your Valentine answer is ready 💞',
-    body: lines.filter((line) => line !== null).join('\n'),
-    lines,
+    body: bodyLines.filter((line) => line !== null).join('\n'),
+    lines: bodyLines,
+    displayLines,
     topName: senderName || '',
     bottomName: receiverName || '',
   };
@@ -74,13 +98,11 @@ export function buildHostToReceiverMailto({
   receiverName,
   receiverEmail,
   receiverLink,
-  letterMessage,
 }) {
   const { subject, body } = composeHostToReceiver({
     senderName,
     receiverName,
     receiverLink,
-    letterMessage,
   });
 
   return encodeMailto({
@@ -94,13 +116,11 @@ export function buildHostToReceiverDraft({
   senderName,
   receiverName,
   receiverLink,
-  letterMessage,
 }) {
   return composeHostToReceiver({
     senderName,
     receiverName,
     receiverLink,
-    letterMessage,
   });
 }
 
@@ -109,13 +129,11 @@ export function buildHostToReceiverGmail({
   receiverName,
   receiverEmail,
   receiverLink,
-  letterMessage,
 }) {
   const { subject, body } = composeHostToReceiver({
     senderName,
     receiverName,
     receiverLink,
-    letterMessage,
   });
 
   return encodeGmail({

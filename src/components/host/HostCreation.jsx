@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Copy, ChevronDown, Link2, Mail, PenLine, User, Users } from 'lucide-react';
+import FloatingHearts from '../FloatingHearts.jsx';
 import EmailDraftModal from '../EmailDraftModal.jsx';
 import { buildHostToReceiverDraft, buildHostToReceiverGmail } from '../../utils/mailto.js';
 
@@ -119,14 +120,21 @@ export default function HostCreation() {
   };
 
   return (
-    <div className="mx-auto flex min-h-screen w-full max-w-3xl flex-col items-center justify-center px-4 py-12">
-      <div className="w-full rounded-3xl border bg-white/80 p-8 shadow-xl">
-        <div className="text-center">
-          <h1 className="font-cursive text-[70px] text-rose-600">Create your Valentine</h1>
-          <p className="mt-2 text-sm text-gray-600">
-            Fill in the details and we will craft a shareable link for your special someone.
-          </p>
-        </div>
+    <div className="relative min-h-screen overflow-hidden">
+      <FloatingHearts color="#f29bb5" />
+      <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-3xl flex-col items-center justify-center px-4 py-12">
+        <div className="w-full rounded-3xl border bg-white/80 p-8 shadow-xl">
+          <div className="text-center">
+            <img
+              src="/letterxo_logo.png"
+              alt="LetterXO"
+              className="mx-auto h-20 w-auto object-contain sm:h-24"
+            />
+            <p className="mt-3 text-sm text-rose-600">Create your Valentine</p>
+            <p className="mt-2 text-sm text-gray-600">
+              Fill in the details and we will craft a shareable link for your special someone.
+            </p>
+          </div>
 
         <div className="mt-8 grid gap-5">
           <label className="grid gap-2 text-sm font-semibold text-gray-700">
@@ -292,17 +300,19 @@ export default function HostCreation() {
             </div>
           </div>
         ) : null}
+        </div>
+        <EmailDraftModal
+          open={draftOpen}
+          onClose={() => setDraftOpen(false)}
+          title="Draft email / message"
+          subject={draftContent?.subject}
+          body={draftContent?.body}
+          lines={draftContent?.lines}
+          displayLines={draftContent?.displayLines}
+          topName={draftContent?.topName}
+          bottomName={draftContent?.bottomName}
+        />
       </div>
-      <EmailDraftModal
-        open={draftOpen}
-        onClose={() => setDraftOpen(false)}
-        title="Draft email / message"
-        subject={draftContent?.subject}
-        body={draftContent?.body}
-        lines={draftContent?.lines}
-        topName={draftContent?.topName}
-        bottomName={draftContent?.bottomName}
-      />
     </div>
   );
 }

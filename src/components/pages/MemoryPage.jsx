@@ -49,7 +49,7 @@ export default function MemoryPage({
 
   return (
     <div
-      className="scrollbar-hidden flex h-full w-full flex-col items-center justify-start overflow-y-auto px-4 py-6"
+      className="scrollbar-hidden flex h-full w-full flex-col items-center justify-start overflow-y-auto px-4 pb-10 pt-6"
       style={{ maxHeight: '100vh', marginTop: '20px' }}
     >
       <div
@@ -122,7 +122,7 @@ export default function MemoryPage({
         </div>
 
         {resultsLink ? (
-          <div className="mt-6 rounded-3xl bg-rose-50 px-6 py-5">
+          <div className="mt-6 rounded-3xl bg-rose-50 px-6 py-6">
             <p className="text-sm font-semibold text-rose-600">Your results link:</p>
             <div className="mt-3 flex items-center gap-3 rounded-2xl bg-white px-4 py-3 shadow-sm">
               <Link2 size={16} className="text-rose-300" />
@@ -142,7 +142,7 @@ export default function MemoryPage({
               </button>
             </div>
             {copiedResults ? <p className="mt-2 text-xs text-rose-400">Results link copied!</p> : null}
-            <div className="mt-4">
+            <div className="mt-4 pb-2">
               <div className="flex flex-wrap items-center justify-center gap-3">
                 <div className="relative" ref={emailMenuRef}>
                   <button
@@ -196,6 +196,7 @@ export default function MemoryPage({
         subject={replyDraft?.subject}
         body={replyDraft?.body}
         lines={replyDraft?.lines}
+        displayLines={replyDraft?.displayLines}
         topName={replyDraft?.topName}
         bottomName={replyDraft?.bottomName}
       />
