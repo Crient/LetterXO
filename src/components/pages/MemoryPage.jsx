@@ -57,10 +57,7 @@ export default function MemoryPage({
   }, [spamNotice]);
 
   return (
-    <div
-      className="scrollbar-hidden flex h-full w-full flex-col items-center justify-start overflow-y-auto px-4 pb-10 pt-6"
-      style={{ maxHeight: '100vh', marginTop: '20px' }}
-    >
+    <div className="scrollbar-hidden flex w-full flex-col items-center justify-start px-4 pb-10 pt-6">
       <div
         className="w-full max-w-xl rounded-[2.5rem] p-6 shadow-[0_30px_70px_rgba(233,77,140,0.25)]"
         style={{ backgroundColor: '#FAF7F5' }}

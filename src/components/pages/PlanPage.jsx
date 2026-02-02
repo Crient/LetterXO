@@ -55,10 +55,7 @@ export default function PlanPage({ theme, plan, setPlan, onNext, pageIndex, tota
   };
 
   return (
-    <div
-      className="scrollbar-hidden flex h-full w-full flex-col items-center justify-start overflow-y-auto px-4 py-6"
-      style={{ maxHeight: '100vh', marginTop: '20px' }}
-    >
+    <div className="scrollbar-hidden flex w-full flex-col items-center justify-start px-4 py-6">
       <div
         className="w-full max-w-[45rem] rounded-[2.5rem] border border-white/70 bg-white/95 px-8 py-10 shadow-[0_30px_70px_rgba(233,77,140,0.35)] backdrop-blur-sm"
         style={{ color: accent }}
