@@ -160,7 +160,7 @@ export default function MemoryPage({
                           setEmailMenuOpen(false);
                           setDraftOpen(true);
                         }}
-                        className="block rounded-xl px-3 py-2 font-semibold text-rose-600 transition hover:bg-rose-50"
+                        className="block w-full rounded-xl px-3 py-2 text-left font-semibold text-rose-600 transition hover:bg-rose-50"
                       >
                         Draft response / message
                       </button>
@@ -169,7 +169,7 @@ export default function MemoryPage({
                         target="_blank"
                         rel="noreferrer"
                         onClick={() => setEmailMenuOpen(false)}
-                        className="mt-1 block rounded-xl px-3 py-2 font-semibold text-rose-600 transition hover:bg-rose-50"
+                        className="mt-1 block w-full rounded-xl px-3 py-2 text-left font-semibold text-rose-600 transition hover:bg-rose-50"
                       >
                         Open in Gmail
                       </a>

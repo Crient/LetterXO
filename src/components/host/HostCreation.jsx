@@ -274,7 +274,7 @@ export default function HostCreation() {
                         setEmailMenuOpen(false);
                         setDraftOpen(true);
                       }}
-                      className="block rounded-xl px-3 py-2 font-semibold text-rose-600 transition hover:bg-rose-50"
+                      className="block w-full rounded-xl px-3 py-2 text-left font-semibold text-rose-600 transition hover:bg-rose-50"
                     >
                       Draft email / message
                     </button>
@@ -283,7 +283,7 @@ export default function HostCreation() {
                       target="_blank"
                       rel="noreferrer"
                       onClick={() => setEmailMenuOpen(false)}
-                      className="mt-1 block rounded-xl px-3 py-2 font-semibold text-rose-600 transition hover:bg-rose-50"
+                      className="mt-1 block w-full rounded-xl px-3 py-2 text-left font-semibold text-rose-600 transition hover:bg-rose-50"
                     >
                       Open in Gmail
                     </a>
