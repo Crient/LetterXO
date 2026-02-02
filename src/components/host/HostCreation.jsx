@@ -66,7 +66,7 @@ export default function HostCreation() {
 
   useEffect(() => {
     if (!spamNotice) return;
-    const timer = setTimeout(() => setSpamNotice(false), 4200);
+    const timer = setTimeout(() => setSpamNotice(false), 8000);
     return () => clearTimeout(timer);
   }, [spamNotice]);
 
@@ -83,6 +83,7 @@ export default function HostCreation() {
 
   const handleCreate = async () => {
     setError('');
+    setSpamNotice(true);
 
     const senderName = data.senderName.trim();
     const receiverName = data.receiverName.trim();
@@ -279,7 +280,6 @@ export default function HostCreation() {
                       type="button"
                       onClick={() => {
                         setEmailMenuOpen(false);
-                        setSpamNotice(true);
                         setDraftOpen(true);
                       }}
                       className="block w-full rounded-xl px-3 py-2 text-left font-semibold text-rose-600 transition hover:bg-rose-50"
@@ -292,7 +292,6 @@ export default function HostCreation() {
                       rel="noreferrer"
                       onClick={() => {
                         setEmailMenuOpen(false);
-                        setSpamNotice(true);
                       }}
                       className="mt-1 block w-full rounded-xl px-3 py-2 text-left font-semibold text-rose-600 transition hover:bg-rose-50"
                     >
@@ -314,7 +313,7 @@ export default function HostCreation() {
         ) : null}
       </div>
       {spamNotice ? (
-        <div className="fixed right-6 top-6 z-50 w-[280px] rounded-2xl border border-rose-100 bg-white/95 p-4 text-xs text-rose-700 shadow-xl">
+        <div className="spam-reminder fixed right-6 top-6 z-50 w-[280px] rounded-2xl border border-rose-100 bg-white/95 p-4 text-xs text-rose-700 shadow-xl">
           <p className="text-sm font-semibold text-rose-600">Quick heads-up</p>
           <p className="mt-1 text-xs text-rose-500">
             If they don’t see your email, ask them to check Spam/Promotions too.

@@ -168,6 +168,22 @@ body {
   pointer-events: none;
 }
 
+.spam-reminder {
+  animation: spamFloat 2.8s ease-in-out infinite;
+}
+
+@keyframes spamFloat {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
 
 @keyframes heartBeat {
   0%,

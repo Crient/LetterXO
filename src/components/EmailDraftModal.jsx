@@ -13,24 +13,29 @@ export default function EmailDraftModal({
   topName,
   bottomName,
 }) {
-  const [copied, setCopied] = useState(false);
+  const [copied, setCopied] = useState(null);
 
-  const message = useMemo(() => {
+  const messageWithSubject = useMemo(() => {
     return `Subject: ${subject || ''}\n\n${body || ''}`.trim();
   }, [subject, body]);
 
+  const messageOnly = useMemo(() => {
+    return (body || '').trim();
+  }, [body]);
+
   useEffect(() => {
-    if (open) setCopied(false);
+    if (open) setCopied(null);
   }, [open]);
 
-  const handleCopy = async () => {
-    if (!message) return;
+  const handleCopy = async (mode) => {
+    const payload = mode === 'full' ? messageWithSubject : messageOnly;
+    if (!payload) return;
     try {
-      await navigator.clipboard.writeText(message);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      await navigator.clipboard.writeText(payload);
+      setCopied(mode);
+      setTimeout(() => setCopied(null), 2000);
     } catch {
-      setCopied(false);
+      setCopied(null);
     }
   };
 
@@ -140,14 +145,23 @@ export default function EmailDraftModal({
           </div>
         </div>
 
-        <div className="mt-5 flex items-center justify-between">
-          <button
-            type="button"
-            onClick={handleCopy}
-            className="inline-flex items-center gap-2 rounded-full bg-rose-500 px-4 py-2 text-xs font-semibold text-white shadow-md transition hover:bg-rose-600"
-          >
-            <Copy size={14} /> {copied ? 'Copied!' : 'Copy message'}
-          </button>
+        <div className="mt-5 flex flex-wrap items-center justify-between gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={() => handleCopy('message')}
+              className="inline-flex items-center gap-2 rounded-full bg-rose-500 px-4 py-2 text-xs font-semibold text-white shadow-md transition hover:bg-rose-600"
+            >
+              <Copy size={14} /> {copied === 'message' ? 'Copied!' : 'Copy message'}
+            </button>
+            <button
+              type="button"
+              onClick={() => handleCopy('full')}
+              className="inline-flex items-center gap-2 rounded-full border border-rose-200 px-4 py-2 text-xs font-semibold text-rose-600 transition hover:bg-rose-50"
+            >
+              <Copy size={14} /> {copied === 'full' ? 'Copied!' : 'Copy w/ subject'}
+            </button>
+          </div>
           <button
             type="button"
             onClick={onClose}
