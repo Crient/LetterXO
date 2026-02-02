@@ -38,7 +38,7 @@ export default function ValentineExperience({
 
   useEffect(() => {
     if (!toast) return;
-    const timeout = setTimeout(() => setToast(null), 3500);
+    const timeout = setTimeout(() => setToast(null), toast?.duration ?? 3500);
     return () => clearTimeout(timeout);
   }, [toast]);
 
@@ -122,6 +122,7 @@ export default function ValentineExperience({
       setToast({
         title: 'Preview mode',
         message: 'This response will not be recorded.',
+        duration: 8000,
       });
       if (previewResultsLink) {
         setResultsLink(previewResultsLink);

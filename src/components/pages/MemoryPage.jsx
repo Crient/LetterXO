@@ -52,7 +52,7 @@ export default function MemoryPage({
 
   useEffect(() => {
     if (!spamNotice) return;
-    const timer = setTimeout(() => setSpamNotice(false), 8000);
+    const timer = setTimeout(() => setSpamNotice(false), 10000);
     return () => clearTimeout(timer);
   }, [spamNotice]);
 
