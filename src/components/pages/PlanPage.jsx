@@ -56,7 +56,7 @@ export default function PlanPage({ theme, plan, setPlan, onNext, pageIndex, tota
 
   return (
     <div
-      className="flex h-full w-full flex-col items-center justify-start overflow-y-auto px-4 py-6"
+      className="scrollbar-hidden flex h-full w-full flex-col items-center justify-start overflow-y-auto px-4 py-6"
       style={{ maxHeight: '100vh', marginTop: '20px' }}
     >
       <div
