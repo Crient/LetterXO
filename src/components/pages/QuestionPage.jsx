@@ -167,7 +167,8 @@ export default function QuestionPage({ theme, onYes, pageIndex, total, onDotClic
             <div className="h-12 w-[220px] opacity-0" aria-hidden="true" />
           </div>
         </div>
-        <p className="text-sm text-gray-600">Psst... the Yes button is looking pretty good right now</p>
+        <p className="text-sm text-gray-600"
+        style={{marginTop:"15px"}}>Psst... the Yes button is looking pretty good right now</p>
       </div>
     </LetterBackground>
   );

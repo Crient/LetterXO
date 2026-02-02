@@ -220,8 +220,8 @@ export default function LetterPage({ toName, fromName, theme, onFlyOut }) {
         </div>
       </div>
 
-      <p className="text-sm text-gray-600" style={{ marginTop: '25px' }}>
-        Hover to peek, click to reveal.
+      <p className="text-sm text-white-600" style={{ marginTop: '25px' }}>
+        Hover to peek inside.
       </p>
     </div>
   );
