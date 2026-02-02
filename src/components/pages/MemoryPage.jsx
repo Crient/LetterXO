@@ -13,12 +13,14 @@ export default function MemoryPage({
   resultsLink,
   replyDraft,
   replyGmail,
+  isPreview = false,
 }) {
   const [copiedResults, setCopiedResults] = useState(false);
   const [note, setNote] = useState('');
   const [emailMenuOpen, setEmailMenuOpen] = useState(false);
   const [draftOpen, setDraftOpen] = useState(false);
   const [spamNotice, setSpamNotice] = useState(false);
+  const [shakeSubmit, setShakeSubmit] = useState(false);
   const emailMenuRef = useRef(null);
 
   const primary = '#BE3A5A';
@@ -119,10 +121,16 @@ export default function MemoryPage({
             type="button"
             onClick={() => {
               setSpamNotice(true);
+              if (isPreview) {
+                setShakeSubmit(true);
+                window.setTimeout(() => setShakeSubmit(false), 450);
+              }
               onSend?.(note);
             }}
             disabled={isSubmitting}
-            className="w-full rounded-3xl px-6 py-3 text-sm font-semibold text-white shadow-lg transition disabled:cursor-not-allowed disabled:opacity-70"
+            className={`w-full rounded-3xl px-6 py-3 text-sm font-semibold text-white shadow-lg transition disabled:cursor-not-allowed disabled:opacity-70 ${
+              shakeSubmit ? 'shake-x' : ''
+            }`}
             style={{ backgroundColor: primary }}
           >
             <Send size={16} className="mr-2 inline" />

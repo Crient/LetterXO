@@ -22,6 +22,9 @@ export default function ReceiverPage() {
   const { id } = useParams();
   const [searchParams] = useSearchParams();
   const token = searchParams.get('t');
+  const previewFlag = searchParams.get('preview');
+  const previewViewToken = searchParams.get('view');
+  const isPreview = previewFlag === '1' || previewFlag === 'true';
   const [valentine, setValentine] = useState(null);
   const [status, setStatus] = useState('loading');
   const [error, setError] = useState('');
@@ -106,5 +109,17 @@ export default function ReceiverPage() {
     return <StatusCard title="Oops" message="This Valentine could not be found." />;
   }
 
-  return <ValentineExperience valentine={valentine} onSubmitResponse={handleSubmitResponse} />;
+  const previewResultsLink =
+    isPreview && previewViewToken && id
+      ? `${window.location.origin}/r/${id}?t=${previewViewToken}`
+      : '';
+
+  return (
+    <ValentineExperience
+      valentine={valentine}
+      onSubmitResponse={handleSubmitResponse}
+      isPreview={isPreview}
+      previewResultsLink={previewResultsLink}
+    />
+  );
 }

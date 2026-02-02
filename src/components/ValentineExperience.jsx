@@ -20,7 +20,12 @@ const initialPlan = {
   placePref: '',
 };
 
-export default function ValentineExperience({ valentine, onSubmitResponse }) {
+export default function ValentineExperience({
+  valentine,
+  onSubmitResponse,
+  isPreview = false,
+  previewResultsLink = '',
+}) {
   const [page, setPage] = useState(0);
   const [plan, setPlan] = useState(initialPlan);
   const [toast, setToast] = useState(null);
@@ -111,7 +116,22 @@ export default function ValentineExperience({ valentine, onSubmitResponse }) {
   const theme = themes.Normal;
 
   const handleSend = async (note) => {
-    if (submitState.status === 'sending' || !onSubmitResponse) return;
+    if (submitState.status === 'sending') return;
+
+    if (isPreview) {
+      setToast({
+        title: 'Preview mode',
+        message: 'This response will not be recorded.',
+      });
+      if (previewResultsLink) {
+        setResultsLink(previewResultsLink);
+      }
+      setSubmitState({ status: 'success', error: null });
+      return;
+    }
+
+    if (!onSubmitResponse) return;
+
     setSubmitState({ status: 'sending', error: null });
     try {
       const response = await onSubmitResponse({ plan, note });
@@ -207,6 +227,7 @@ export default function ValentineExperience({ valentine, onSubmitResponse }) {
             resultsLink={resultsLink}
             replyDraft={replyDraft}
             replyGmail={replyGmail}
+            isPreview={isPreview}
           />
         );
       default:

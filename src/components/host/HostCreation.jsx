@@ -30,6 +30,7 @@ export default function HostCreation() {
 
   const receiverLink = links?.receiverLink || '';
   const resultsLink = links?.resultsLink || '';
+  const previewLink = links?.previewLink || receiverLink;
 
   const draftContent = useMemo(() => {
     if (!receiverLink) return null;
@@ -119,6 +120,7 @@ export default function HostCreation() {
       setLinks({
         receiverLink: `${origin}/v/${result.id}?t=${result.edit_token}`,
         resultsLink: `${origin}/r/${result.id}?t=${result.view_token}`,
+        previewLink: `${origin}/v/${result.id}?t=${result.edit_token}&preview=1&view=${result.view_token}`,
       });
     } catch (err) {
       setError(err?.message || 'Something went wrong. Please try again.');
@@ -301,7 +303,7 @@ export default function HostCreation() {
                 ) : null}
               </div>
               <a
-                href={receiverLink}
+                href={previewLink}
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex items-center gap-2 rounded-full border border-rose-300 px-5 py-2 text-xs font-semibold text-rose-600 transition hover:bg-rose-100"
