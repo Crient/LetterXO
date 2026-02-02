@@ -121,16 +121,17 @@ export default function HostCreation() {
 
   return (
     <div className="relative min-h-screen overflow-hidden">
-      <FloatingHearts color="#f29bb5" />
+      <FloatingHearts color="#e94f88" />
       <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-3xl flex-col items-center justify-center px-4 py-12">
         <div className="w-full rounded-3xl border bg-white/80 p-8 shadow-xl">
           <div className="text-center">
             <img
               src="/letterxo_logo.png"
               alt="LetterXO"
-              className="mx-auto h-20 w-auto object-contain sm:h-24"
+              className="mx-auto w-auto object-contain"
+              style={{ height: '400px', marginTop: '-100px', marginBottom: '-130px' }}
             />
-            <p className="mt-3 text-sm text-rose-600">Create your Valentine</p>
+            <p className="mt-3 font-cursive text-[35px] font-bold text-rose-600">Create your Valentine</p>
             <p className="mt-2 text-sm text-gray-600">
               Fill in the details and we will craft a shareable link for your special someone.
             </p>
@@ -145,7 +146,7 @@ export default function HostCreation() {
               type="text"
               value={data.senderName}
               onChange={handleChange('senderName')}
-              placeholder="Alex"
+            placeholder="Devede"
               className="rounded-2xl border px-4 py-3 text-sm outline-none"
             />
           </label>
@@ -158,7 +159,7 @@ export default function HostCreation() {
               type="email"
               value={data.senderEmail}
               onChange={handleChange('senderEmail')}
-              placeholder="alex@email.com"
+              placeholder="devede@email.com"
               className="rounded-2xl border px-4 py-3 text-sm outline-none"
             />
           </label>
@@ -171,7 +172,7 @@ export default function HostCreation() {
               type="text"
               value={data.receiverName}
               onChange={handleChange('receiverName')}
-              placeholder="Jamie"
+              placeholder="Sienna"
               className="rounded-2xl border px-4 py-3 text-sm outline-none"
             />
           </label>
@@ -184,7 +185,7 @@ export default function HostCreation() {
               type="email"
               value={data.receiverEmail}
               onChange={handleChange('receiverEmail')}
-              placeholder="jamie@email.com"
+              placeholder="sienna@email.com"
               className="rounded-2xl border px-4 py-3 text-sm outline-none"
             />
           </label>

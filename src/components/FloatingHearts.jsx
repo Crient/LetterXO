@@ -8,10 +8,10 @@ export default function FloatingHearts({ color = '#ff7ab6' }) {
     return Array.from({ length: 18 }, (_, index) => ({
       id: index,
       left: Math.random() * 100,
-      size: 12 + Math.random() * 18,
-      duration: 12 + Math.random() * 12,
+      size: 22 + Math.random() * 34,
+      duration: 10 + Math.random() * 10,
       delay: Math.random() * -16,
-      opacity: 0.35 + Math.random() * 0.5,
+      opacity: 0.7 + Math.random() * 0.3,
     }));
   }, []);
 
