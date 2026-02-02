@@ -94,10 +94,10 @@ export default function LetterPage({ toName, fromName, theme, onFlyOut }) {
 
   return (
     <div className="flex flex-col items-center gap-6 text-center"
-    style={{marginTop: "50px"}}>
-      <div className="origin-center" style={{ transform: 'scale(1.1)' }}>
+    style={{marginTop: "32px"}}>
+      <div className="origin-center scale-100 sm:scale-110">
       <div
-        className={`envelope-3d relative h-64 w-96 cursor-pointer outline-none focus:outline-none focus-visible:outline-none ${isFlying ? 'envelope-tilt' : 'envelope-float'}`}
+        className={`envelope-3d relative h-56 w-[88vw] max-w-sm cursor-pointer outline-none focus:outline-none focus-visible:outline-none sm:h-64 sm:w-96 ${isFlying ? 'envelope-tilt' : 'envelope-float'}`}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         onClick={handleClick}
@@ -189,7 +189,7 @@ export default function LetterPage({ toName, fromName, theme, onFlyOut }) {
         >
           <div
             ref={letterRef}
-            className="px-12 py-10 text-left min-h-[20rem]"
+            className="min-h-[18rem] px-6 py-8 text-left sm:min-h-[20rem] sm:px-12 sm:py-10"
             style={{
               backgroundImage: 'url("/envelope_paper.png")',
               backgroundSize: '100% 100%',

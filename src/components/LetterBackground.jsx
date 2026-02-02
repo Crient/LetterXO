@@ -11,7 +11,7 @@ export default function LetterBackground({
   return (
     <div
       ref={containerRef}
-      className="torn-edge torn-paper-shadow relative mx-auto w-full max-w-[50rem] rounded-2xl px-8 py-8 min-h-[30rem]"
+      className="torn-edge torn-paper-shadow relative mx-auto w-full max-w-[50rem] rounded-2xl px-5 py-6 min-h-[30rem] sm:px-8 sm:py-8"
       style={{
         backgroundColor: 'transparent',
         backgroundImage: 'url("/envelope_paper.png")',

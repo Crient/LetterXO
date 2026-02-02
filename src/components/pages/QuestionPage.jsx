@@ -32,10 +32,16 @@ export default function QuestionPage({ theme, onYes, pageIndex, total, onDotClic
     y: Math.min(Math.max(pos.y, padding), bounds.height - buttonHeight - padding),
   });
 
+  const getButtonWidth = (bounds) => {
+    const isMobile = bounds.width < 420;
+    const target = isMobile ? 180 : BUTTON_WIDTH;
+    return Math.min(target, bounds.width - 40);
+  };
+
   const moveNo = () => {
     if (!paperBounds || !rowBounds) return;
     const padding = 20;
-    const buttonWidth = Math.min(BUTTON_WIDTH, paperBounds.width - padding * 2);
+    const buttonWidth = getButtonWidth(paperBounds);
     const buttonHeight = BUTTON_HEIGHT;
     const minX = padding;
     const maxX = paperBounds.width - buttonWidth - padding;
@@ -110,7 +116,7 @@ export default function QuestionPage({ theme, onYes, pageIndex, total, onDotClic
   useEffect(() => {
     if (!paperBounds || !rowBounds) return;
     const padding = 20;
-    const buttonWidth = Math.min(BUTTON_WIDTH, paperBounds.width - padding * 2);
+    const buttonWidth = getButtonWidth(paperBounds);
     const buttonHeight = BUTTON_HEIGHT;
     const rowLeft = rowBounds.left - paperBounds.left;
     const rowTop = rowBounds.top - paperBounds.top;
@@ -136,7 +142,7 @@ export default function QuestionPage({ theme, onYes, pageIndex, total, onDotClic
             onMouseEnter={moveNo}
             onClick={moveNo}
             onFocus={moveNo}
-            className="pointer-events-auto absolute h-12 w-[220px] whitespace-nowrap rounded-full border text-base font-semibold shadow-md no-button-move"
+            className="pointer-events-auto absolute h-11 w-[180px] whitespace-nowrap rounded-full border text-sm font-semibold shadow-md no-button-move sm:h-12 sm:w-[220px] sm:text-base"
             style={{
               left: noPos.x,
               top: noPos.y,
@@ -151,20 +157,20 @@ export default function QuestionPage({ theme, onYes, pageIndex, total, onDotClic
       }
     >
       <div className="flex min-h-[22rem] flex-col items-center justify-center gap-5 text-center sm:min-h-[23rem]">
-        <h2 className="valentine-title text-[75px] font-bold leading-tight sm:text-[75px]">
-          Will you be my <br></br> Valentine?
+        <h2 className="valentine-title text-[44px] font-bold leading-tight sm:text-[75px]">
+          Will you be my <br className="hidden sm:block" /> Valentine?
         </h2>
         <div className="flex w-full justify-center">
           <div ref={rowRef} className="inline-flex items-center gap-5">
             <button
               type="button"
               onClick={onYes}
-              className="h-12 w-[220px] rounded-full text-base font-semibold shadow-lg transition"
+              className="h-11 w-[180px] rounded-full text-sm font-semibold shadow-lg transition sm:h-12 sm:w-[220px] sm:text-base"
               style={{ backgroundColor: theme?.primary, color: theme?.buttonText }}
             >
               Yes!
             </button>
-            <div className="h-12 w-[220px] opacity-0" aria-hidden="true" />
+            <div className="h-11 w-[180px] opacity-0 sm:h-12 sm:w-[220px]" aria-hidden="true" />
           </div>
         </div>
         <p className="text-sm text-gray-600"
