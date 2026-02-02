@@ -156,7 +156,7 @@ export default function HostCreation() {
               type="text"
               value={data.senderName}
               onChange={handleChange('senderName')}
-            placeholder="Devede"
+            placeholder="Leng"
               className="rounded-2xl border px-4 py-3 text-sm outline-none"
             />
           </label>
@@ -169,7 +169,7 @@ export default function HostCreation() {
               type="email"
               value={data.senderEmail}
               onChange={handleChange('senderEmail')}
-              placeholder="devede@email.com"
+              placeholder="leng@email.com"
               className="rounded-2xl border px-4 py-3 text-sm outline-none"
             />
           </label>
