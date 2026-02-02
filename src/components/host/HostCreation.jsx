@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react';
-import { Copy, Link2, Mail, PenLine, User, Users } from 'lucide-react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Copy, ChevronDown, Link2, Mail, PenLine, User, Users } from 'lucide-react';
 import { buildHostToReceiverGmail, buildHostToReceiverMailto } from '../../utils/mailto.js';
 
 const DEFAULT_MESSAGE = "I've been wanting to ask you something…";
@@ -18,6 +18,8 @@ export default function HostCreation() {
   const [copied, setCopied] = useState({ receiver: false, results: false });
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [emailMenuOpen, setEmailMenuOpen] = useState(false);
+  const emailMenuRef = useRef(null);
 
   const handleChange = (field) => (event) => {
     setData({ ...data, [field]: event.target.value });
@@ -47,6 +49,16 @@ export default function HostCreation() {
       letterMessage: data.letterMessage.trim(),
     });
   }, [data, receiverLink]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (emailMenuRef.current && !emailMenuRef.current.contains(event.target)) {
+        setEmailMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const handleCopy = async (type, value) => {
     if (!value) return;
@@ -235,22 +247,42 @@ export default function HostCreation() {
             {copied.results ? <p className="mt-2 text-xs text-rose-400">Results link copied!</p> : null}
 
             <div className="mt-5 flex flex-wrap gap-3">
-              <button
-                type="button"
-                onClick={() => {
-                  if (draftMailto) window.location.href = draftMailto;
-                }}
-                className="inline-flex items-center gap-2 rounded-full bg-rose-500 px-5 py-2 text-xs font-semibold text-white shadow-md transition hover:bg-rose-600"
-              >
-                <Mail size={14} /> Draft Email 💌
-              </button>
+              <div className="relative" ref={emailMenuRef}>
+                <button
+                  type="button"
+                  onClick={() => setEmailMenuOpen((prev) => !prev)}
+                  className="inline-flex items-center gap-2 rounded-full bg-rose-500 px-5 py-2 text-xs font-semibold text-white shadow-md transition hover:bg-rose-600"
+                >
+                  <Mail size={14} /> Send email 💌 <ChevronDown size={14} />
+                </button>
+                {emailMenuOpen ? (
+                  <div className="absolute left-0 z-20 mt-2 w-56 rounded-2xl border border-rose-100 bg-white p-2 text-xs shadow-lg">
+                    <a
+                      href={draftMailto}
+                      onClick={() => setEmailMenuOpen(false)}
+                      className="block rounded-xl px-3 py-2 font-semibold text-rose-600 transition hover:bg-rose-50"
+                    >
+                      Draft email (default app)
+                    </a>
+                    <a
+                      href={draftGmail}
+                      target="_blank"
+                      rel="noreferrer"
+                      onClick={() => setEmailMenuOpen(false)}
+                      className="mt-1 block rounded-xl px-3 py-2 font-semibold text-rose-600 transition hover:bg-rose-50"
+                    >
+                      Open in Gmail
+                    </a>
+                  </div>
+                ) : null}
+              </div>
               <a
-                href={draftGmail}
+                href={receiverLink}
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex items-center gap-2 rounded-full border border-rose-300 px-5 py-2 text-xs font-semibold text-rose-600 transition hover:bg-rose-100"
               >
-                Open in Gmail
+                Preview Experience ✨
               </a>
             </div>
           </div>
