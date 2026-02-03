@@ -77,27 +77,32 @@ export default function MemoryPage({
         </div>
 
         <div className="mt-5 rounded-[2rem] px-6 py-4 text-sm" style={{ backgroundColor: '#F5E4E8' }}>
-          <div className="flex items-center justify-between border-b border-pink-200/70 py-3 text-black">
-            <span className="font-semibold">For</span>
-            <span className="font-cursive text-lg" style={{ color: '#E54A7B' }}>
+          <div className="flex items-start gap-4 border-b border-pink-200/70 py-3 text-black">
+            <span className="shrink-0 font-semibold">For</span>
+            <span
+              className="min-w-0 flex-1 break-words text-right font-cursive text-lg"
+              style={{ color: '#E54A7B' }}
+            >
               {data.to || 'Valentine'}
             </span>
           </div>
-          <div className="flex items-center justify-between border-b border-pink-200/70 py-3 text-black">
-            <span className="font-semibold">Vibe</span>
-            <span className="font-semibold">{vibe}</span>
+          <div className="flex items-start gap-4 border-b border-pink-200/70 py-3 text-black">
+            <span className="shrink-0 font-semibold">Vibe</span>
+            <span className="min-w-0 flex-1 break-words text-right font-semibold">{vibe}</span>
           </div>
-          <div className="flex items-center justify-between border-b border-pink-200/70 py-3 text-black">
-            <span className="font-semibold">Plan</span>
-            <span className="font-semibold">{mainPlan}</span>
+          <div className="flex items-start gap-4 border-b border-pink-200/70 py-3 text-black">
+            <span className="shrink-0 font-semibold">Plan</span>
+            <span className="min-w-0 flex-1 break-words text-right font-semibold">{mainPlan}</span>
           </div>
-          <div className="flex items-center justify-between border-b border-pink-200/70 py-3 text-black">
-            <span className="font-semibold">Food</span>
-            <span className="font-semibold">{plan.food || 'No choice yet'}</span>
+          <div className="flex items-start gap-4 border-b border-pink-200/70 py-3 text-black">
+            <span className="shrink-0 font-semibold">Food</span>
+            <span className="min-w-0 flex-1 break-words text-right font-semibold">
+              {plan.food || 'No choice yet'}
+            </span>
           </div>
-          <div className="flex items-center justify-between py-3 text-black">
-            <span className="font-semibold">Notes</span>
-            <span className="font-semibold">{notes}</span>
+          <div className="flex items-start gap-4 py-3 text-black">
+            <span className="shrink-0 font-semibold">Notes</span>
+            <span className="min-w-0 flex-1 break-all text-right font-semibold">{notes}</span>
           </div>
         </div>
 

@@ -109,7 +109,7 @@ export default function ResultsPage() {
           {result.letter_message ? (
             <div className="rounded-2xl bg-white px-5 py-4">
               <p className="text-xs font-semibold uppercase tracking-wide text-rose-500">Letter message</p>
-              <p className="mt-2 whitespace-pre-wrap break-words text-sm text-gray-700">
+              <p className="mt-2 whitespace-pre-wrap break-all text-sm text-gray-700">
                 {result.letter_message}
               </p>
             </div>
@@ -120,19 +120,19 @@ export default function ResultsPage() {
             <div className="mt-3 grid gap-2">
               <div className="flex items-start gap-4">
                 <span className="shrink-0 font-semibold">Vibe</span>
-                <span className="min-w-0 flex-1 break-words text-right">{result.vibe || '—'}</span>
+                <span className="min-w-0 flex-1 break-all text-right">{result.vibe || '—'}</span>
               </div>
               <div className="flex items-start gap-4">
                 <span className="shrink-0 font-semibold">Main plan</span>
-                <span className="min-w-0 flex-1 break-words text-right">{result.main_plan || '—'}</span>
+                <span className="min-w-0 flex-1 break-all text-right">{result.main_plan || '—'}</span>
               </div>
               <div className="flex items-start gap-4">
                 <span className="shrink-0 font-semibold">Food</span>
-                <span className="min-w-0 flex-1 break-words text-right">{result.food || '—'}</span>
+                <span className="min-w-0 flex-1 break-all text-right">{result.food || '—'}</span>
               </div>
               <div className="flex items-start gap-4">
                 <span className="shrink-0 font-semibold">Notes</span>
-                <span className="min-w-0 flex-1 break-words text-right">
+                <span className="min-w-0 flex-1 break-all text-right">
                   {result.place_text || '—'}
                 </span>
               </div>
@@ -142,7 +142,7 @@ export default function ResultsPage() {
           {result.receiver_note ? (
             <div className="rounded-2xl bg-white px-5 py-4">
               <p className="text-xs font-semibold uppercase tracking-wide text-rose-500">Receiver note</p>
-              <p className="mt-2 whitespace-pre-wrap break-words text-sm text-gray-700">
+              <p className="mt-2 whitespace-pre-wrap break-all text-sm text-gray-700">
                 {result.receiver_note}
               </p>
             </div>
