@@ -88,7 +88,15 @@ export default function ReceiverPage() {
 
     const result = await response.json();
     if (!response.ok) {
-      throw new Error(result?.error || 'Unable to submit your response.');
+      const rawError = result?.error || 'Unable to submit your response.';
+      const friendlyError = rawError
+        .replace('place_text', "Notes (Let's plan)")
+        .replace('receiver_note', 'Say something back')
+        .replace('main_plan', 'Main plan')
+        .replace('place_pref', 'Place preference')
+        .replace('food', 'Food')
+        .replace('vibe', 'Vibe');
+      throw new Error(friendlyError);
     }
 
     const origin = window.location.origin;

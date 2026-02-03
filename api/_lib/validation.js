@@ -205,7 +205,7 @@ export function validateRespondPayload(body) {
   const placeText = validateOptionalText({
     value: body.place_text,
     field: 'place_text',
-    max: 120,
+    max: 250,
     regex: null,
     multiline: false,
   });

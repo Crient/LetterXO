@@ -39,7 +39,18 @@ export default function PlanPage({ theme, plan, setPlan, onNext, pageIndex, tota
     setPlan(next);
   };
 
+  const PLACE_TEXT_MAX = 250;
+
   const handleContinue = () => {
+    const noteLength = (plan.placeText || '').trim().length;
+    if (noteLength > PLACE_TEXT_MAX) {
+      setToast?.({
+        title: 'Notes too long',
+        message: "Notes (Let's plan) must be 250 characters or fewer.",
+      });
+      return;
+    }
+
     const hasVibe = Boolean(plan.vibe);
     const hasMainPlan = Boolean(plan.mainPlan) || Boolean(plan.customPlan);
     const hasFood = Boolean(plan.food);
@@ -187,6 +198,7 @@ export default function PlanPage({ theme, plan, setPlan, onNext, pageIndex, tota
               className="w-full rounded-2xl border px-4 py-3 text-sm shadow-sm outline-none"
               style={{ borderColor: primary }}
             />
+            <p className="text-xs text-pink-500">Notes can be 250 characters or fewer.</p>
           </section>
 
           <button

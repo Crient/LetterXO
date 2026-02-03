@@ -108,7 +108,7 @@ export default function MemoryPage({
 
         <div className="mt-6 space-y-2 text-left">
           <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: primary }}>
-            Add a little note? (optional)
+            Say something back? (optional)
           </p>
           <textarea
             value={note}
@@ -116,6 +116,7 @@ export default function MemoryPage({
             placeholder="Write something sweet..."
             className="min-h-[140px] w-full resize-none rounded-2xl border border-pink-200 bg-white px-4 py-4 text-sm shadow-sm outline-none transition focus:border-pink-400"
           />
+          <p className="text-xs text-pink-500">Say something back here (max 800 characters).</p>
         </div>
 
         <div className="mt-5 space-y-3">
