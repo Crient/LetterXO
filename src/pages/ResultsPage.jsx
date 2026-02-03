@@ -92,41 +92,49 @@ export default function ResultsPage() {
         <div className="mt-6 grid gap-4 text-sm text-gray-700">
           <div className="rounded-2xl bg-rose-50 px-5 py-4">
             <p className="text-xs font-semibold uppercase tracking-wide text-rose-500">From</p>
-            <p className="mt-1 text-base font-semibold text-rose-700">{result.sender_name}</p>
-            {result.sender_email ? <p className="text-xs text-rose-400">{result.sender_email}</p> : null}
+            <p className="mt-1 break-words text-base font-semibold text-rose-700">{result.sender_name}</p>
+            {result.sender_email ? (
+              <p className="break-all text-xs text-rose-400">{result.sender_email}</p>
+            ) : null}
           </div>
 
           <div className="rounded-2xl bg-rose-50 px-5 py-4">
             <p className="text-xs font-semibold uppercase tracking-wide text-rose-500">To</p>
-            <p className="mt-1 text-base font-semibold text-rose-700">{result.receiver_name}</p>
-            {result.receiver_email ? <p className="text-xs text-rose-400">{result.receiver_email}</p> : null}
+            <p className="mt-1 break-words text-base font-semibold text-rose-700">{result.receiver_name}</p>
+            {result.receiver_email ? (
+              <p className="break-all text-xs text-rose-400">{result.receiver_email}</p>
+            ) : null}
           </div>
 
           {result.letter_message ? (
             <div className="rounded-2xl bg-white px-5 py-4">
               <p className="text-xs font-semibold uppercase tracking-wide text-rose-500">Letter message</p>
-              <p className="mt-2 whitespace-pre-wrap text-sm text-gray-700">{result.letter_message}</p>
+              <p className="mt-2 whitespace-pre-wrap break-words text-sm text-gray-700">
+                {result.letter_message}
+              </p>
             </div>
           ) : null}
 
           <div className="rounded-2xl bg-white px-5 py-4">
             <p className="text-xs font-semibold uppercase tracking-wide text-rose-500">Response summary</p>
             <div className="mt-3 grid gap-2">
-              <div className="flex items-center justify-between">
-                <span className="font-semibold">Vibe</span>
-                <span>{result.vibe || '—'}</span>
+              <div className="flex items-start gap-4">
+                <span className="shrink-0 font-semibold">Vibe</span>
+                <span className="min-w-0 flex-1 break-words text-right">{result.vibe || '—'}</span>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="font-semibold">Main plan</span>
-                <span>{result.main_plan || '—'}</span>
+              <div className="flex items-start gap-4">
+                <span className="shrink-0 font-semibold">Main plan</span>
+                <span className="min-w-0 flex-1 break-words text-right">{result.main_plan || '—'}</span>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="font-semibold">Food</span>
-                <span>{result.food || '—'}</span>
+              <div className="flex items-start gap-4">
+                <span className="shrink-0 font-semibold">Food</span>
+                <span className="min-w-0 flex-1 break-words text-right">{result.food || '—'}</span>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="font-semibold">Notes</span>
-                <span>{result.place_text || '—'}</span>
+              <div className="flex items-start gap-4">
+                <span className="shrink-0 font-semibold">Notes</span>
+                <span className="min-w-0 flex-1 break-words text-right">
+                  {result.place_text || '—'}
+                </span>
               </div>
             </div>
           </div>
@@ -134,7 +142,9 @@ export default function ResultsPage() {
           {result.receiver_note ? (
             <div className="rounded-2xl bg-white px-5 py-4">
               <p className="text-xs font-semibold uppercase tracking-wide text-rose-500">Receiver note</p>
-              <p className="mt-2 whitespace-pre-wrap text-sm text-gray-700">{result.receiver_note}</p>
+              <p className="mt-2 whitespace-pre-wrap break-words text-sm text-gray-700">
+                {result.receiver_note}
+              </p>
             </div>
           ) : null}
         </div>
