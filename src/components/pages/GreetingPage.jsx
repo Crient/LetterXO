@@ -33,7 +33,7 @@ export default function GreetingPage({ toName, fromName, intro, theme, onNext, p
         </p>
         {intro ? (
           <div
-            className="max-w-lg rounded-3xl border px-7 py-5 text-base leading-relaxed text-gray-700 shadow-sm sm:text-lg"
+            className="max-w-lg whitespace-pre-wrap break-words rounded-3xl border px-7 py-5 text-base leading-relaxed text-gray-700 shadow-sm sm:text-lg"
             style={{ borderColor: heartColor, backgroundColor: theme?.secondary || 'rgba(255,255,255,0.7)' }}
           >
             {intro}
